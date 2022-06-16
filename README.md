@@ -9,9 +9,10 @@
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1.  下载OpenCV 4.5.4  
+2.  将acl模块，完整拷贝到opencv/modules目录下
+3.  修改acl/CMakelists.txt文件，修改acl_lib,acl_inc路径
+4.  按照OpenCV的编译方法进行编译、安装和测试
 
 #### 使用说明
 
