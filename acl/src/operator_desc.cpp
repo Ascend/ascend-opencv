@@ -1,0 +1,185 @@
+
+/**
+* @file operator_desc.cpp
+*
+* Copyright (C) 2020. Huawei Technologies Co., Ltd. All rights reserved.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+*/
+
+#include "precomp.hpp"
+
+using namespace std;
+
+namespace cv
+{
+    namespace acl
+    {
+        OperatorDesc::OperatorDesc(std::string opType) : opType(std::move(opType))
+        {
+            opAttr = aclopCreateAttr();
+        }
+
+        OperatorDesc::~OperatorDesc()
+        {
+            for (auto *desc : inputDesc)
+            {
+                aclDestroyTensorDesc(desc);
+            }
+
+            for (auto *desc : outputDesc)
+            {
+                aclDestroyTensorDesc(desc);
+            }
+
+            aclopDestroyAttr(opAttr);
+        }
+
+        OperatorDesc &OperatorDesc::AddInputTensorDesc(aclDataType dataType,
+                                                       int numDims,
+                                                       const int64_t *dims,
+                                                       aclFormat format)
+        {
+            aclTensorDesc *desc = aclCreateTensorDesc(dataType, numDims, dims, format);
+            CV_Assert(desc);
+            inputDesc.emplace_back(desc);
+            return *this;
+        }
+
+        OperatorDesc &OperatorDesc::AddOutputTensorDesc(aclDataType dataType,
+                                                        int numDims,
+                                                        const int64_t *dims,
+                                                        aclFormat format)
+        {
+            aclTensorDesc *desc = aclCreateTensorDesc(dataType, numDims, dims, format);
+            CV_Assert(desc);
+            outputDesc.emplace_back(desc);
+            return *this;
+        }
+
+         /**
+         * @brief create operator describe
+         *  
+         */
+        OperatorDesc CreateOpDesc(const string opType, const vector<aclMat>& input_Mat, vector<aclMat>& output_Mat, aclFormat format, Opdims config)
+        {
+            CV_Assert(config == TWO_DIMS || config == FOUR_DIMS);
+
+            size_t i;
+            aclDataType dataType = type_transition(input_Mat[0].depth());
+
+            OperatorDesc opDesc(opType);
+            for (i = 0; i < input_Mat.size(); ++i) {
+                if (config == TWO_DIMS)
+                {
+                    int cols = input_Mat[i].step / input_Mat[i].elemSize();
+                    vector<int64_t> shape{input_Mat[i].rows, cols};
+                    opDesc.AddInputTensorDesc(dataType, shape.size(), shape.data(), format);
+                }
+                else if(config == FOUR_DIMS)
+                {
+                    int cols = input_Mat[i].step / input_Mat[i].elemSize();
+                    vector<int64_t> shape{1, input_Mat[i].rows, cols, input_Mat[i].channels()};
+                    opDesc.AddInputTensorDesc(dataType, shape.size(), shape.data(), format);
+                }
+            }
+
+            for (i = 0; i < output_Mat.size(); ++i) {
+                if (config == TWO_DIMS)
+                {
+                    int cols = output_Mat[i].step / output_Mat[i].elemSize();
+                    vector<int64_t> shape{output_Mat[i].rows, cols};
+                    opDesc.AddOutputTensorDesc(dataType, shape.size(), shape.data(), format);
+                }
+                else if(config == FOUR_DIMS)
+                {
+                    int cols = output_Mat[i].step / output_Mat[i].elemSize();
+                    vector<int64_t> shape{1, output_Mat[i].rows, cols, output_Mat[i].channels()};
+                    opDesc.AddOutputTensorDesc(dataType, shape.size(), shape.data(), format);
+                }
+            }
+
+            return opDesc;
+        }
+
+        /**
+         * @brief compile and run operator
+         * 
+         */
+        void compileAndRunop(OperatorDesc& opDesc, vector<aclDataBuffer *>& inputBuffers_, vector<aclDataBuffer *>& outputBuffers_, aclCxt *acl_context)
+        {
+                AclSafeCall(aclopCompile(opDesc.opType.c_str(),
+                            opDesc.inputDesc.size(),
+                            opDesc.inputDesc.data(),
+                            opDesc.outputDesc.size(),
+                            opDesc.outputDesc.data(),
+                            opDesc.opAttr,
+                            ACL_ENGINE_SYS,
+                            ACL_COMPILE_SYS,
+                            nullptr));
+                
+                AclSafeCall(aclopExecuteV2(opDesc.opType.c_str(),
+                            inputBuffers_.size(),
+                            opDesc.inputDesc.data(),
+                            inputBuffers_.data(),
+                            outputBuffers_.size(),
+                            opDesc.outputDesc.data(),
+                            outputBuffers_.data(),
+                            opDesc.opAttr,
+                            acl_context->get_stream(0)));
+
+
+            AclSafeCall(aclrtSynchronizeStream(acl_context->get_stream(0)));
+            
+        }
+
+        void Runop(vector<aclMat>& input, vector<aclMat>& output, OperatorDesc& opDesc) 
+        {
+            size_t i;
+
+            vector<aclDataBuffer *> inputBuffers_;
+            vector<aclDataBuffer *> outputBuffers_;
+
+            for (i = 0; i < input.size(); ++i)
+                inputBuffers_.emplace_back(aclCreateDataBuffer(input[i].data, input[i].totalSize));
+            for (i = 0; i < output.size(); ++i)
+                outputBuffers_.emplace_back(aclCreateDataBuffer(output[i].data, output[i].totalSize));
+
+            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, output[0].acl_context);
+
+            for (i = 0; i < input.size(); ++i)
+                AclSafeCall(aclDestroyDataBuffer(inputBuffers_[i]));
+            for (i = 0; i < output.size(); ++i)
+                AclSafeCall(aclDestroyDataBuffer(outputBuffers_[i]));
+        }
+
+        void OneInAndOneOut(const aclMat& inputMat, aclMat& outputMat, const string opType)
+        {
+            vector<aclMat> input_Mat;
+            vector<aclMat> output_Mat;
+
+            input_Mat.emplace_back(inputMat);
+            output_Mat.emplace_back(outputMat);
+
+            OperatorDesc opDesc = CreateOpDesc(opType, input_Mat, output_Mat);
+            Runop(input_Mat, output_Mat, opDesc);
+        }
+
+        void TwoInAndOneOut(const aclMat& inputMat, const aclMat& inputMatOther, aclMat& outputMat, const string opType) 
+        {
+            vector<aclMat> input_Mat;
+            vector<aclMat> output_Mat;
+
+            input_Mat.emplace_back(inputMat);
+            input_Mat.emplace_back(inputMatOther);
+            output_Mat.emplace_back(outputMat);
+           
+            OperatorDesc opDesc = CreateOpDesc(opType, input_Mat, output_Mat);
+            Runop(input_Mat, output_Mat, opDesc);
+        }
+
+    } /* end of namespace acl */
+
+} /* end of namespace cv */
