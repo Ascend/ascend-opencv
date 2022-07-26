@@ -48,7 +48,7 @@ namespace cv
             case ACL_FLOAT:
             {
                 aclrtMalloc(&dev_ptr, powersize, ACL_MEM_MALLOC_NORMAL_ONLY);
-                float32_t power_32f = float32_t(power);
+                float power_32f = float(power);
                 aclrtMemcpy(dev_ptr, powersize, static_cast<void *>(&power_32f), powersize, ACL_MEMCPY_HOST_TO_DEVICE);
                 return dev_ptr;
             }

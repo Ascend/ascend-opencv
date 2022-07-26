@@ -114,12 +114,9 @@ void PERF_TEST::Test_operator_div_perf(aclCxt *acl_context)
         for (val = 8; val <= valmax; val *= 2)
         {
             int n = 100;
-            Mat mat_src(val, val, type[i]);
-            Mat mat_dest(val, val, type[i]);
+            Mat mat_src(val, val, type[i], Scalar(1, 2, 4));
+            Mat mat_dest(val, val, type[i], Scalar(2, 4, 8));
             Mat mat_dest1(val, val, type[i]);
-
-            test.SetDataRange(mat_src, 2);
-            test.SetDataRange(mat_dest, 1);
 
             aclMat aclmat_src(val, val, type[i], mat_src.data, acl_context);
             aclMat aclmat_dest(val, val, type[i], mat_dest.data, acl_context);

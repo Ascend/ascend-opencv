@@ -137,15 +137,16 @@ namespace cv
 
         inline aclMat::~aclMat()
         {
-            release();
+            if (refcount)
+                release();
         }
 
         inline aclMat &aclMat::operator=(const aclMat &m)
         {
             if (this != &m)
             {
-                if (m.refcount)
-                    CV_XADD(m.refcount, 1);
+                if (refcount)
+                    CV_XADD(refcount, -1);
                 flags = m.flags;
                 rows = m.rows;
                 cols = m.cols;
@@ -159,6 +160,8 @@ namespace cv
                 acl_context = m.acl_context;
                 totalSize = m.totalSize;
                 data = m.data;
+                if (m.refcount)
+                    CV_XADD(m.refcount, 1);
             }
             return *this;
         }

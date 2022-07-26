@@ -90,7 +90,23 @@ namespace cv
                 AclSafeCall(aclDestroyDataBuffer(outputBuffers_[i]));
         }
 */
-
+        static int merge_type(int depth, int channels)
+        {
+            switch (depth)
+            {
+                case CV_8U:
+                    return CV_8UC(channels);
+                case CV_8S:
+                    return CV_8SC(channels);
+                case CV_32F:
+                    return CV_32FC(channels);
+                case CV_32S:
+                    return CV_32SC(channels);
+                case CV_64F:
+                    return CV_64FC(channels);
+            }
+            return -1;
+        }
 
         void merge(const vector<aclMat>& mv, aclMat& dest)
         {
@@ -110,17 +126,22 @@ namespace cv
                 opDesc.AddInputTensorDesc(dataType, inputShape.size(), inputShape.data(), ACL_FORMAT_NHWC);
             }
 
-            int cols = dest.step/dest.elemSize();
-            vector<int64_t> outputShape{1, dest.rows, cols, dest.channels()};
+            int cols = mv[0].step/mv[0].elemSize();
+            int channels = mv.size();
+            vector<int64_t> outputShape{1, mv[0].rows, cols, channels};
             opDesc.AddOutputTensorDesc(dataType, outputShape.size(), outputShape.data(), ACL_FORMAT_NHWC);
 
             ino64_t N = mv.size();
             aclopSetAttrInt(opDesc.opAttr, "N", N);
 
             aclSetTensorDescName(opDesc.inputDesc[0], "concat_dim");
+            
             aclSetTensorDescName(opDesc.inputDesc[1], "x0");
             aclSetTensorDescName(opDesc.inputDesc[2], "x1");
-            aclSetTensorDescName(opDesc.inputDesc[3], "x2");
+            if (mv.size() == 3)
+                aclSetTensorDescName(opDesc.inputDesc[3], "x2");
+            else if(mv.size() == 4)
+                aclSetTensorDescName(opDesc.inputDesc[4], "x3");
             aclSetTensorDescName(opDesc.outputDesc[0], "y");
 
             void *dev;
@@ -133,6 +154,9 @@ namespace cv
             for (size_t i = 0; i < mv.size(); ++i)
                 inputBuffers_.emplace_back(aclCreateDataBuffer(mv[i].data, mv[i].totalSize));
 
+            int type = merge_type(mv[0].depth(), channels);  
+            aclMat temp(mv[0].rows, mv[0].cols, type, mv[0].acl_context);
+            dest = temp;
             outputBuffers_.emplace_back(aclCreateDataBuffer(dest.data, dest.totalSize));
 
             compileAndRunop(opDesc, inputBuffers_, outputBuffers_, dest.acl_context);
@@ -257,6 +281,23 @@ namespace cv
         }
 */
 
+        static int split_type(int depth)
+        {
+            switch (depth)
+            {
+                case CV_8U:
+                    return CV_8UC1;
+                case CV_8S:
+                    return CV_8SC1;
+                case CV_32F:
+                    return CV_32FC1;
+                case CV_32S:
+                    return CV_32SC1;
+                case CV_64F:
+                    return CV_64FC1;
+            }
+            return -1;
+        }
 
         void split(const aclMat& src, vector<aclMat>& mv)
         {
@@ -274,8 +315,7 @@ namespace cv
 
             for (int i = 0; i < num_split; ++i)
             {
-                int cols = mv[i].step/mv[i].elemSize();
-                vector<int64_t> outputShape{1, mv[i].rows, cols, mv[i].channels()};
+                vector<int64_t> outputShape{1, src.rows, cols, 1};
                 opDesc.AddOutputTensorDesc(dataType, outputShape.size(), outputShape.data(), ACL_FORMAT_ND);
             }
             
@@ -285,11 +325,16 @@ namespace cv
 
             inputBuffers_.emplace_back(aclCreateDataBuffer(src.data, src.totalSize));
 
+            int type = split_type(src.depth());
             for (int i = 0; i < num_split; ++i)
+            {
+                aclMat tmp(src.rows, src.cols, type, src.acl_context);
+                mv[i] = tmp;
                 outputBuffers_.emplace_back(aclCreateDataBuffer(mv[i].data, mv[i].totalSize));
+            }
 
             compileAndRunop(opDesc, inputBuffers_, outputBuffers_, src.acl_context);
-                
+
             AclSafeCall(aclDestroyDataBuffer(inputBuffers_[0]));
             for (int i = 0; i < num_split; ++i)
                 AclSafeCall(aclDestroyDataBuffer(outputBuffers_[i]));
