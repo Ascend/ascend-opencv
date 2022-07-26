@@ -129,9 +129,10 @@
 1. 在配置好AScend之后,用户需要官网下载好opencv库和本模块(acl),保证acl模块和opencv在同一级目录下
 2. 进入acl目录将run.sh脚本拷贝或者移动到acl和opencv的同级目录
 3. 如果acl路径不在系统默认路径，修改acl/CMakelists.txt文件，修改acl_lib,acl_inc路径
-4. 给脚本文件加权限: chmod +x run.sh
-5. 运行脚本: ./run.sh
-6. 如果需要安装之后运行单元测试模块，可在脚本后加命令: ./run.sh ACLTEST
+5. 如果需要运行测试案例需要修改test目录下acl.cpp中的set_device函数中.json文件的路径为绝对路径
+6. 给脚本文件加权限: chmod +x run.sh
+7. 运行脚本: ./run.sh
+8. 如果需要安装之后运行单元测试模块，可在脚本后加命令: ./run.sh ACLTEST
 
 
 

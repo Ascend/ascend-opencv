@@ -7,7 +7,7 @@ namespace opencv_test
 {
     namespace
     {
-        aclCxt *acl_context_0 = set_device("/home/perfxlab4/OpenCV_ACL/modules/acl/test/acl.json", 1, 2);
+        aclCxt *acl_context_0 = set_device("../../modules/acl/test/acl.json", 1, 2);
         ////////////////////////////////////////////////////Correctness_test//////////////////////////////////////////////////////// 
 
         /* range: rows: 1 ~ 64, cols: 1 ~ 64, type: 0 ~ 7 
