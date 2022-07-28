@@ -57,7 +57,7 @@ void PERF_TEST::Test_operator_sub_perf(aclCxt *acl_context)
     double begin, end, time, acltime;
     Common_Test test;
 
-    vector<int> type{CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
+    vector<int> type{CV_32FC1, CV_32SC1, CV_64FC1};
     for (size_t i = 0; i < type.size(); ++i)
     {
         test.PrintLog("Perf test : Function: operator-=()", type[i]);
@@ -68,8 +68,8 @@ void PERF_TEST::Test_operator_sub_perf(aclCxt *acl_context)
             Mat mat_dest(val, val, type[i]);
             Mat mat_dest1(val, val, type[i]);
 
-            test.SetDataRange(mat_src, 1);
-            test.SetDataRange(mat_dest, 1);
+            test.SetDataRange(mat_src, 4);
+            test.SetDataRange(mat_dest, 32);
 
             aclMat aclmat_src(val, val, type[i], mat_src.data, acl_context);
             aclMat aclmat_dest(val, val, type[i], mat_dest.data, acl_context);
@@ -150,7 +150,7 @@ void PERF_TEST::Test_operator_div_perf(aclCxt *acl_context)
 void PERF_TEST::Test_operator_mul_perf(aclCxt *acl_context)
 {
     int val, type;
-    int valmax = 8192;
+    int valmax = 4096;
     double begin, end, time, acltime;
     Common_Test test;
 

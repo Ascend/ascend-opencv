@@ -4,7 +4,7 @@
 void PERF_TEST::Test_MatMul(aclCxt *acl_context)
 {
     int val, type;
-    int valmax = 8192;
+    int valmax = 4096;
     double begin, end, time, acltime;
     Common_Test test;
 
@@ -53,7 +53,7 @@ void PERF_TEST::Test_MatMul(aclCxt *acl_context)
 void PERF_TEST::Test_Convolution(aclCxt *acl_context)
 {
     int val, type;
-    int valmax = 8192;
+    int valmax = 4096;
     double begin, end, time, acltime;
     Common_Test test;
 
@@ -68,7 +68,7 @@ void PERF_TEST::Test_Convolution(aclCxt *acl_context)
         aclMat aclmat_src(val, val, type, mat_src.data, acl_context);
         aclMat aclmat_kernel(3, 3, type, mat_kernel.data, acl_context);
         aclMat aclmat_dest(val, val, type, mat_dest.data, acl_context);
-        int n = 1;
+        int n = 100;
 
         begin = static_cast<double>(getTickCount());
         while (n--)
@@ -76,7 +76,7 @@ void PERF_TEST::Test_Convolution(aclCxt *acl_context)
         end = static_cast<double>(getTickCount());
         time = (end - begin) / getTickFrequency();
 
-        n = 1;
+        n = 100;
         begin = static_cast<double>(getTickCount());
         vector<int64_t> strides{1, 1, 1, 1};
         vector<int64_t> pads{1, 1, 1, 1};
@@ -87,8 +87,6 @@ void PERF_TEST::Test_Convolution(aclCxt *acl_context)
         acltime = (end - begin) / getTickFrequency();
 
         aclmat_dest.download(mat_dest1);
-        cout << mat_dest << endl;
-        cout << mat_dest1 << endl;
         /*
         bool ret = test.Test_Diff(mat_dest, mat_dest1);
         ASSERT_TRUE(ret);

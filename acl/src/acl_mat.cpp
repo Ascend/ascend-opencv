@@ -200,7 +200,6 @@ namespace cv
             opDesc.AddTensorAttr("transpose_x2", OP_BOOL, false);
             compileAndRunop(opDesc, inputBuffers_, outputBuffers_, this->acl_context);
 
-            newMat.data = aclGetDataBufferAddr(outputBuffers_[0]);
             *this = newMat;
 
             for (size_t i = 0; i < inputBuffers_.size(); i++)

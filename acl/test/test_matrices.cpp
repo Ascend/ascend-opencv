@@ -143,7 +143,7 @@ void PERF_TEST::Test_Transpose(aclCxt *acl_context)
 void PERF_TEST::Test_Split(aclCxt *acl_context)
 {
     int val;
-    int valmax = 8;
+    int valmax = 8192;
     double begin, end, time, acltime;
     Common_Test test;
 
@@ -155,7 +155,7 @@ void PERF_TEST::Test_Split(aclCxt *acl_context)
         test.PrintLog("Perf test : Function: split()", srcType[i]);
         for (val = 8; val <= valmax; val *= 2)
         {
-            int n = 1;
+            int n = 100;
             Mat mat_src(val, val, srcType[i]);
             Mat mat_dest1(val, val, destType[i]);
             Mat mat_dest2(val, val, destType[i]);
@@ -164,9 +164,9 @@ void PERF_TEST::Test_Split(aclCxt *acl_context)
             test.SetDataRange(mat_src, 32);
 
             aclMat aclmat_src(val, val, srcType[i], mat_src.data, acl_context);
-            aclMat aclmat_dest1(val, val, destType[i], mat_dest1.data, acl_context);
-            aclMat aclmat_dest2(val, val, destType[i], mat_dest2.data, acl_context);
-            aclMat aclmat_dest3(val, val, destType[i], mat_dest3.data, acl_context);
+            aclMat aclmat_dest1;
+            aclMat aclmat_dest2;
+            aclMat aclmat_dest3;
 
             vector<Mat> dest;
             dest.emplace_back(mat_dest1);
@@ -184,7 +184,7 @@ void PERF_TEST::Test_Split(aclCxt *acl_context)
             end = static_cast<double>(getTickCount());
             time = (end - begin) / getTickFrequency();
 
-            n = 1;
+            n = 100;
             begin = static_cast<double>(getTickCount());
             while (n--)
                 split(aclmat_src, acl_dest);
@@ -204,6 +204,7 @@ void PERF_TEST::Test_Split(aclCxt *acl_context)
             else
                 cout << "Shape: " << val << " x " << val << "\t";
             cout << "CpuTimes: " << time << "\tAclTimes: " << acltime << "\tRate: " << time / acltime << endl;
+
         }
     }
 

@@ -8,7 +8,7 @@ namespace cv
         {
             aclMat dest(a.rows, a.cols, a.type(), a.acl_context);
             OneInAndOneOut(a, dest, "Abs");
-            return a; 
+            return dest; 
         }
 
         static void *power_data(double power, aclDataType type, size_t powersize)

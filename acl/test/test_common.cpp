@@ -201,35 +201,35 @@ bool Common_Test::SetDataRange(Mat &src, int dataRange)
         for (int i = 0; i < src.rows * src.cols * src.channels(); i += src.channels())
         {
             for (int j = 0; j < src.channels(); ++j)
-                (src.data)[i+j] = RandDom_(dataRange);
+                (src.data)[i+j] = RandDom_(dataRange) + 1;
         }
         return true;
     case CV_16U:
         for (int i = 0; i < src.rows * src.cols * src.channels(); i += src.channels())
         {
             for (int j = 0; j < src.channels(); ++j)
-                ((unsigned short *)src.data)[i+j] = RandDom_(dataRange);
+                ((unsigned short *)src.data)[i+j] = RandDom_(dataRange) + 1;
         }
         return true;
     case CV_32S:
         for (int i = 0; i < src.rows * src.cols * src.channels(); i += src.channels())
         {
             for (int j = 0; j < src.channels(); ++j)
-                ((int *)src.data)[i+j] = RandDom_(dataRange);
+                ((int *)src.data)[i+j] = RandDom_(dataRange) + 1;
         }
         return true;
     case CV_32F:
         for (int i = 0; i < src.rows * src.cols * src.channels(); i += src.channels())
         {
             for (int j = 0; j < src.channels(); ++j)
-                ((float *)src.data)[i+j] = RandDom_(dataRange) / 1.0;
+                ((float *)src.data)[i+j] = RandDom_(dataRange) / 1.0 + 1;
         }
         return true;
     case CV_64F:
         for (int i = 0; i < src.rows * src.cols * src.channels(); i += src.channels())
         {
             for (int j = 0; j < src.channels(); ++j)
-                ((double *)src.data)[i+j] = RandDom_(dataRange) / 1.0;
+                ((double *)src.data)[i+j] = RandDom_(dataRange) / 1.0 + 1;
         }
         return true;
     default:

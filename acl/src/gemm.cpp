@@ -31,8 +31,6 @@ namespace cv
             opDesc.AddTensorAttr("transpose_x2", OP_BOOL, false);
             compileAndRunop(opDesc, inputBuffers_, outputBuffers_, dest.acl_context);
 
-            dest.data = aclGetDataBufferAddr(outputBuffers_[0]);
-
             for (size_t i = 0; i < inputBuffers_.size(); i++)
                 AclSafeCall(aclDestroyDataBuffer(inputBuffers_[i]));
             for (size_t i = 0; i < outputBuffers_.size(); i++)

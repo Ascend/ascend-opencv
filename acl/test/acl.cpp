@@ -204,7 +204,7 @@ namespace opencv_test
             test.Test_operator_mul_perf(acl_context_0);
         }
 
-        TEST(Mathfuncs, abs)
+        TEST(Mathfunction, abs)
         {
             PERF_TEST test;
             test.Test_Abs(acl_context_0);
@@ -215,7 +215,6 @@ namespace opencv_test
             PERF_TEST test;
             test.Test_Pow(acl_context_0);
         }
-
         TEST(Mathfunction, sqrt)
         {
             PERF_TEST test;
@@ -263,17 +262,17 @@ namespace opencv_test
             PERF_TEST test;
             test.Test_MatMul(acl_context_0);
         }
-        
-        TEST(Matrices, merge)
-        {
-            PERF_TEST test;
-            test.Test_Merge(acl_context_0);
-        }
 
         TEST(Gemm, Convolution)
         {
             PERF_TEST test;
             test.Test_Convolution(acl_context_0);
+        }
+
+        TEST(Matrices, merge)
+        {
+            PERF_TEST test;
+            test.Test_Merge(acl_context_0);
         }
 
         TEST(Matrices, split)

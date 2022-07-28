@@ -145,8 +145,9 @@ namespace cv
         {
             if (this != &m)
             {
+                
                 if (refcount)
-                    CV_XADD(refcount, -1);
+                    release();
                 flags = m.flags;
                 rows = m.rows;
                 cols = m.cols;
