@@ -7,7 +7,9 @@ namespace opencv_test
 {
     namespace
     {
-        aclCxt *acl_context_0 = set_device("../../modules/acl/test/acl.json", 1, 2);
+#if 0
+        aclCxt *acl_context_0 = set_device("../../modules/acl/test/acl.json", 0, 2);
+    
         ////////////////////////////////////////////////////Correctness_test//////////////////////////////////////////////////////// 
 
         /* range: rows: 1 ~ 64, cols: 1 ~ 64, type: 0 ~ 7 
@@ -299,6 +301,29 @@ namespace opencv_test
             PERF_TEST test;
             test.Test_Flip(acl_context_0);
             release_device(acl_context_0);
+        }
+#endif
+
+        TEST(Test, other)
+        {
+            aclCxt *acl_context_0 = set_device("../../modules/acl/test/acl.json", 0, 2);
+            PERF_TEST test;
+            test.Test_other(acl_context_0);
+            release_device(acl_context_0);
+        }
+
+        TEST(Test, other1)
+        {
+            aclCxt *acl_context_0 = set_device("../../modules/acl/test/acl.json", 0, 2);
+            PERF_TEST test;
+            test.Test_other1(acl_context_0);
+            release_device(acl_context_0);
+        }
+
+        TEST(Test, other2)
+        {
+            PERF_TEST test;
+            test.Test_other2();
         }
     }
 }

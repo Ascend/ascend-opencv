@@ -15,6 +15,8 @@
 #include "opencv2/videoio.hpp"
 #include "sys/time.h"
 #include "opencv2/acl/acl.hpp"
+#include "acl/acl.h"
+#include "acl/acl_op_compiler.h"
 
 using namespace cv;
 using namespace cv::acl;

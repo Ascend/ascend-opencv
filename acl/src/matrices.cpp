@@ -147,7 +147,7 @@ namespace cv
             void *dev;
             int64_t concat_dim = 3;
             size_t size = aclGetTensorDescSize(opDesc.inputDesc[0]);
-            aclrtMalloc(&dev, size, ACL_MEM_MALLOC_HUGE_FIRST);
+            aclrtMalloc(&dev, size, ACL_MEM_MALLOC_NORMAL_ONLY);
             aclrtMemcpy(dev, size, &concat_dim, size, ACL_MEMCPY_HOST_TO_DEVICE);
             inputBuffers_.emplace_back(aclCreateDataBuffer(dev, size));
 
@@ -200,7 +200,7 @@ namespace cv
             void *perm;
 
             size_t size = aclGetTensorDescSize(opDesc.inputDesc[1]);
-            aclrtMalloc(&dev, size, ACL_MEM_MALLOC_HUGE_FIRST);
+            aclrtMalloc(&dev, size, ACL_MEM_MALLOC_NORMAL_ONLY);
             aclrtMallocHost(&perm, aclGetTensorDescSize(opDesc.inputDesc.data()[1]));
             ((int *)perm)[0] = 0;
             ((int *)perm)[1] = 2;
@@ -388,7 +388,7 @@ namespace cv
             void *dev;
             int split_dim = 3;
             size_t size = aclGetTensorDescSize(opDesc.inputDesc[0]);
-            aclrtMalloc(&dev, size, ACL_MEM_MALLOC_HUGE_FIRST);
+            aclrtMalloc(&dev, size, ACL_MEM_MALLOC_NORMAL_ONLY);
             aclrtMemcpy(dev, size, &split_dim, size, ACL_MEMCPY_HOST_TO_DEVICE);
 
             inputBuffers_host.emplace_back(aclCreateDataBuffer(&split_dim, size));
@@ -450,7 +450,7 @@ namespace cv
 
             void *dev;
             size_t size = aclGetTensorDescSize(opDesc.inputDesc[1]);
-            aclrtMalloc(&dev, size, ACL_MEM_MALLOC_HUGE_FIRST);
+            aclrtMalloc(&dev, size, ACL_MEM_MALLOC_NORMAL_ONLY);
             aclrtMemcpy(dev, size, &axis, size, ACL_MEMCPY_HOST_TO_DEVICE);
             inputBuffers_.emplace_back(aclCreateDataBuffer(dev, size));
 

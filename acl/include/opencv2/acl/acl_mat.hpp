@@ -18,8 +18,8 @@ namespace cv
                 //! default constructor
                 aclMat();
                 //! constructs aclMatrix of the specified size and type (_type is CV_8UC1,  CV_16FC1 etc.)
-                aclMat(int rows, int cols, int type, aclCxt *acl_context, ALIGNMENT config = MEMORY_UNALIGNED, MemMallocPolicy policy = MALLOC_HUGE_FIRST);
-                aclMat(Size size, int type, aclCxt *acl_context, ALIGNMENT config = MEMORY_UNALIGNED, MemMallocPolicy policy = MALLOC_HUGE_FIRST);
+                aclMat(int rows, int cols, int type, aclCxt *acl_context, ALIGNMENT config = MEMORY_UNALIGNED, MemMallocPolicy policy = MALLOC_NORMAL_ONLY);
+                aclMat(Size size, int type, aclCxt *acl_context, ALIGNMENT config = MEMORY_UNALIGNED, MemMallocPolicy policy = MALLOC_NORMAL_ONLY);
                 //! copy constructor
                 aclMat(const aclMat &m);
                 //! constructor for aclMatrix headers pointing to user-allocated data
@@ -29,7 +29,7 @@ namespace cv
                 aclMat(const aclMat &m, const Range &rowRange, const Range &colRange = Range::all());
                 aclMat(const aclMat &m, const Rect &roi);
                 //! builds aclMat from Mat. Perfom blocking upload to device.
-                aclMat (const Mat &m, aclCxt* acl_context, ALIGNMENT config = MEMORY_UNALIGNED, MemMallocPolicy policy = MALLOC_HUGE_FIRST);
+                aclMat (const Mat &m, aclCxt* acl_context, ALIGNMENT config = MEMORY_UNALIGNED, MemMallocPolicy policy = MALLOC_NORMAL_ONLY);
                 //! destructor - calls release()
                 ~aclMat();
 
@@ -67,12 +67,12 @@ namespace cv
 
                 //! allocates new aclMatrix data unless the aclMatrix already has specified size and type.
                 // previous data is unreferenced if needed.
-                void create(int rows, int cols, int type, ALIGNMENT config = MEMORY_UNALIGNED, MemMallocPolicy policy = MALLOC_HUGE_FIRST);
-                void create(Size size, int type, ALIGNMENT config = MEMORY_UNALIGNED, MemMallocPolicy policy = MALLOC_HUGE_FIRST);
+                void create(int rows, int cols, int type, ALIGNMENT config = MEMORY_UNALIGNED, MemMallocPolicy policy = MALLOC_NORMAL_ONLY);
+                void create(Size size, int type, ALIGNMENT config = MEMORY_UNALIGNED, MemMallocPolicy policy = MALLOC_NORMAL_ONLY);
 
                 //! allocates new aclMatrix with specified device memory type.
-                void createEx(int rows, int cols, int type, ALIGNMENT config = MEMORY_UNALIGNED, MemMallocPolicy policy = MALLOC_HUGE_FIRST);
-                void createEx(Size size, int type, ALIGNMENT config = MEMORY_UNALIGNED, MemMallocPolicy policy = MALLOC_HUGE_FIRST);
+                void createEx(int rows, int cols, int type, ALIGNMENT config = MEMORY_UNALIGNED, MemMallocPolicy policy = MALLOC_NORMAL_ONLY);
+                void createEx(Size size, int type, ALIGNMENT config = MEMORY_UNALIGNED, MemMallocPolicy policy = MALLOC_NORMAL_ONLY);
 
                 //! decreases reference counter;
                 // deallocate the data when reference counter reaches 0.

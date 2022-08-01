@@ -20,7 +20,7 @@ namespace cv
         /**
          *   @param [in] _acl_context: Acl context
          *   @param [in] config: Byte aligned or not, Default MEMORY_UNALIGNED
-         *   @param [in] policy: Acl Memory Application mode, Default ACL_MEM_MALLOC_HUGE_FIRST
+         *   @param [in] policy: Acl Memory Application mode, Default ACL_MEM_MALLOC_NORMAL_ONLY
          */
         inline aclMat::aclMat(int _rows, int _cols, int _type, aclCxt *_acl_context, ALIGNMENT config, MemMallocPolicy policy)
             : flags(0), rows(0), cols(0), step(0), data(nullptr), refcount(nullptr), datastart(nullptr),
@@ -201,7 +201,7 @@ namespace cv
                 dest.totalSize = totalSize;
 
                 void *dev_ptr;
-                AclSafeCall(aclrtMalloc(&dev_ptr, totalSize, type_transition(MALLOC_HUGE_FIRST)));
+                AclSafeCall(aclrtMalloc(&dev_ptr, totalSize, type_transition(MALLOC_NORMAL_ONLY)));
                 AclSafeCall(aclrtMemcpy(dev_ptr, totalSize, data, totalSize, ACL_MEMCPY_DEVICE_TO_DEVICE));
 
                 dest.data = dev_ptr;

@@ -189,15 +189,16 @@ namespace cv
             input_Mat.emplace_back(m);
             output_Mat.emplace_back(newMat);
 
+            OperatorDesc opDesc = CreateOpDesc("MatMul", input_Mat, output_Mat, ACL_FORMAT_NHWC, TWO_DIMS);
+            opDesc.AddInputTensorDesc(ACL_DT_UNDEFINED, 0, nullptr, ACL_FORMAT_UNDEFINED);
+            opDesc.AddTensorAttr("transpose_x1", OP_BOOL, false);
+            opDesc.AddTensorAttr("transpose_x2", OP_BOOL, false);
+
             inputBuffers_.emplace_back(aclCreateDataBuffer(this->data, this->totalSize));
             inputBuffers_.emplace_back(aclCreateDataBuffer(m.data, m.totalSize));
             inputBuffers_.emplace_back(aclCreateDataBuffer(nullptr, 0));
             outputBuffers_.emplace_back(aclCreateDataBuffer(newMat.data, newMat.totalSize));
 
-            OperatorDesc opDesc = CreateOpDesc("MatMul", input_Mat, output_Mat, ACL_FORMAT_NHWC, TWO_DIMS);
-            opDesc.AddInputTensorDesc(ACL_DT_UNDEFINED, 0, nullptr, ACL_FORMAT_UNDEFINED);
-            opDesc.AddTensorAttr("transpose_x1", OP_BOOL, false);
-            opDesc.AddTensorAttr("transpose_x2", OP_BOOL, false);
             compileAndRunop(opDesc, inputBuffers_, outputBuffers_, this->acl_context);
 
             *this = newMat;
