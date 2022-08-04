@@ -7,7 +7,6 @@ namespace opencv_test
 {
     namespace
     {
-#if 0
         aclCxt *acl_context_0 = set_device("../../modules/acl/test/acl.json", 0, 2);
     
         ////////////////////////////////////////////////////Correctness_test//////////////////////////////////////////////////////// 
@@ -302,8 +301,8 @@ namespace opencv_test
             test.Test_Flip(acl_context_0);
             release_device(acl_context_0);
         }
-#endif
 
+#ifdef DEBUG
         TEST(Test, other)
         {
             aclCxt *acl_context_0 = set_device("../../modules/acl/test/acl.json", 0, 2);
@@ -325,5 +324,6 @@ namespace opencv_test
             PERF_TEST test;
             test.Test_other2();
         }
+#endif
     }
 }
