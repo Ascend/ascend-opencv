@@ -8,7 +8,7 @@ namespace cv
          * @brief: matrix multiplication  
          * 
          */
-        void MatMul(const aclMat& src1, const aclMat& src2, aclMat& dest)
+        void MatMul(const aclMat& src1, const aclMat& src2, aclMat& dest, int stream_id)
         {
             CV_Assert(src1.cols == src2.rows && src1.type() == src2.type());
             vector<aclMat> input_Mat;
@@ -29,7 +29,7 @@ namespace cv
             opDesc.AddInputTensorDesc(ACL_DT_UNDEFINED, 0, nullptr, ACL_FORMAT_UNDEFINED);
             opDesc.AddTensorAttr("transpose_x1", OP_BOOL, false);
             opDesc.AddTensorAttr("transpose_x2", OP_BOOL, false);
-            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, dest.acl_context);
+            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, dest.acl_context, stream_id);
 
             for (size_t i = 0; i < inputBuffers_.size(); i++)
                 AclSafeCall(aclDestroyDataBuffer(inputBuffers_[i]));
@@ -45,7 +45,7 @@ namespace cv
          * @param [in] stridesList: strides, The N and C dimensions must be set to 1
          * @param [in] padSList: pads, vector<int64_t>(top, bottom, left, right)
          */
-        void Convolution(const aclMat& src, const aclMat& kernel, aclMat& dest, const vector<int64_t>& stridesList, const vector<int64_t>& padsList)
+        void Convolution(const aclMat& src, const aclMat& kernel, aclMat& dest, const vector<int64_t>& stridesList, const vector<int64_t>& padsList, int stream_id)
         {
             vector<aclDataBuffer *> inputBuffers_;
             vector<aclDataBuffer *> outputBuffers_;
@@ -74,7 +74,7 @@ namespace cv
             inputBuffers_.emplace_back(aclCreateDataBuffer(src.data, src.totalSize));
             inputBuffers_.emplace_back(aclCreateDataBuffer(kernel.data, kernel.totalSize));
             outputBuffers_.emplace_back(aclCreateDataBuffer(acl_dest.data, acl_dest.totalSize));
-            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, src.acl_context);
+            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, src.acl_context, stream_id);
             acl_dest.data = aclGetDataBufferAddr(outputBuffers_[0]);
             dest = acl_dest;
 

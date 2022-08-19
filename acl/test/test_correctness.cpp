@@ -576,6 +576,7 @@ void AclMat_Test::Test_operator_add(aclCxt *acl_context) {
                 mat_dest += mat_src;
 
                 aclmat_dest += aclmat_src;
+                wait_stream(acl_context);
                 aclmat_dest.download(mat_dest1, MEMORY_ALIGN);
 
                 ret = test.Test_Diff(mat_dest, mat_dest1);
@@ -609,7 +610,9 @@ void AclMat_Test::Test_operator_sub(aclCxt *acl_context) {
                 aclMat aclmat_dest(rows, cols, type[i], mat_dest.data, acl_context, MEMORY_ALIGN);
 
                 mat_dest -= mat_src;
+
                 aclmat_dest -= aclmat_src;
+                wait_stream(acl_context);
                 aclmat_dest.download(mat_dest1, MEMORY_ALIGN);
 
                 ret = test.Test_Diff(mat_dest, mat_dest1);
@@ -643,7 +646,9 @@ void AclMat_Test::Test_operator_div(aclCxt *acl_context) {
                 aclMat aclmat_dest(rows, cols, type[i], mat_dest.data, acl_context, MEMORY_ALIGN);
 
                 mat_dest /= mat_src;
+
                 aclmat_dest /= aclmat_src;
+                wait_stream(acl_context);
                 aclmat_dest.download(mat_dest1, MEMORY_ALIGN);
 
                 ret = test.Test_Diff(mat_dest, mat_dest1);
@@ -676,7 +681,9 @@ void AclMat_Test::Test_operator_mul(aclCxt *acl_context) {
                 aclMat aclmat_dest(val, val, type[i], mat_dest.data, acl_context);
 
                 mat_dest *= mat_src;
+
                 aclmat_dest *= aclmat_src;
+                wait_stream(acl_context);
                 aclmat_dest.download(mat_dest1);
 
                 ret = test.Test_Diff(mat_dest, mat_dest1);

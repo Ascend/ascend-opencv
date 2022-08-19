@@ -108,7 +108,7 @@ namespace cv
          * @brief compile and run operator
          * 
          */
-        void compileAndRunop(OperatorDesc& opDesc, vector<aclDataBuffer *>& inputBuffers_, vector<aclDataBuffer *>& outputBuffers_, aclCxt *acl_context)
+        void compileAndRunop(OperatorDesc& opDesc, vector<aclDataBuffer *>& inputBuffers_, vector<aclDataBuffer *>& outputBuffers_, aclCxt *acl_context, int stream_id)
         {
                 AclSafeCall(aclopCompile(opDesc.opType.c_str(),
                             opDesc.inputDesc.size(),
@@ -128,14 +128,10 @@ namespace cv
                             opDesc.outputDesc.data(),
                             outputBuffers_.data(),
                             opDesc.opAttr,
-                            acl_context->get_stream(0)));
-
-
-            AclSafeCall(aclrtSynchronizeStream(acl_context->get_stream(0)));
-            
+                            acl_context->get_stream(stream_id)));
         }
 
-        void Runop(vector<aclMat>& input, vector<aclMat>& output, OperatorDesc& opDesc) 
+        void Runop(vector<aclMat>& input, vector<aclMat>& output, OperatorDesc& opDesc, int stream_id) 
         {
             size_t i;
 
@@ -147,7 +143,7 @@ namespace cv
             for (i = 0; i < output.size(); ++i)
                 outputBuffers_.emplace_back(aclCreateDataBuffer(output[i].data, output[i].totalSize));
 
-            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, output[0].acl_context);
+            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, output[0].acl_context, stream_id);
 
             for (i = 0; i < input.size(); ++i)
                 AclSafeCall(aclDestroyDataBuffer(inputBuffers_[i]));
@@ -155,7 +151,7 @@ namespace cv
                 AclSafeCall(aclDestroyDataBuffer(outputBuffers_[i]));
         }
 
-        void OneInAndOneOut(const aclMat& inputMat, aclMat& outputMat, const string opType)
+        void OneInAndOneOut(const aclMat& inputMat, aclMat& outputMat, const string opType, int stream_id)
         {
             vector<aclMat> input_Mat;
             vector<aclMat> output_Mat;
@@ -164,10 +160,10 @@ namespace cv
             output_Mat.emplace_back(outputMat);
 
             OperatorDesc opDesc = CreateOpDesc(opType, input_Mat, output_Mat);
-            Runop(input_Mat, output_Mat, opDesc);
+            Runop(input_Mat, output_Mat, opDesc, stream_id);
         }
 
-        void TwoInAndOneOut(const aclMat& inputMat, const aclMat& inputMatOther, aclMat& outputMat, const string opType) 
+        void TwoInAndOneOut(const aclMat& inputMat, const aclMat& inputMatOther, aclMat& outputMat, const string opType, int stream_id) 
         {
             vector<aclMat> input_Mat;
             vector<aclMat> output_Mat;
@@ -177,7 +173,7 @@ namespace cv
             output_Mat.emplace_back(outputMat);
            
             OperatorDesc opDesc = CreateOpDesc(opType, input_Mat, output_Mat);
-            Runop(input_Mat, output_Mat, opDesc);
+            Runop(input_Mat, output_Mat, opDesc, stream_id);
         }
 
     } /* end of namespace acl */

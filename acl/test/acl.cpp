@@ -7,10 +7,9 @@ namespace opencv_test
 {
     namespace
     {
-        aclCxt *acl_context_0 = set_device("../../modules/acl/test/acl.json", 0, 2);
-    
+        aclCxt *acl_context_0 = set_device("../../modules/acl/test/acl.json", 0, 3);
         ////////////////////////////////////////////////////Correctness_test//////////////////////////////////////////////////////// 
-
+#if 0
         /* range: rows: 1 ~ 64, cols: 1 ~ 64, type: 0 ~ 7 
          * test function:
          * config: MEMORY_ALIGN
@@ -179,6 +178,7 @@ namespace opencv_test
             AclMat_Test test;
             test.Test_operator_div(acl_context_0);
         }
+#endif
 ////////////////////////////////////////////////////Perf_test//////////////////////////////////////////////////////// 
 
         TEST(Operator, add)
@@ -216,6 +216,7 @@ namespace opencv_test
             PERF_TEST test;
             test.Test_Pow(acl_context_0);
         }
+
         TEST(Mathfunction, sqrt)
         {
             PERF_TEST test;
@@ -302,28 +303,6 @@ namespace opencv_test
             release_device(acl_context_0);
         }
 
-#ifdef DEBUG
-        TEST(Test, other)
-        {
-            aclCxt *acl_context_0 = set_device("../../modules/acl/test/acl.json", 0, 2);
-            PERF_TEST test;
-            test.Test_other(acl_context_0);
-            release_device(acl_context_0);
-        }
 
-        TEST(Test, other1)
-        {
-            aclCxt *acl_context_0 = set_device("../../modules/acl/test/acl.json", 0, 2);
-            PERF_TEST test;
-            test.Test_other1(acl_context_0);
-            release_device(acl_context_0);
-        }
-
-        TEST(Test, other2)
-        {
-            PERF_TEST test;
-            test.Test_other2();
-        }
-#endif
-    }
+    }               
 }

@@ -10,12 +10,12 @@ namespace cv
         // Matrix lookup table
         //CV_EXPORTS void lookUpTable(const aclMat& src, const aclMat& lut, aclMat& dst);
         // Multiple channel merge
-        CV_EXPORTS void merge(const vector<aclMat>& mv, aclMat& dst);
+        CV_EXPORTS void merge(const vector<aclMat>& mv, aclMat& dst, int stream_id = 0);
         // Split into channels 
-        CV_EXPORTS void split(const aclMat& src, vector<aclMat>& mv);
+        CV_EXPORTS void split(const aclMat& src, vector<aclMat>& mv, int stream_id = 0);
         // Matrix transpose
-        CV_EXPORTS void transpose(const aclMat& src, aclMat& dest);
-        CV_EXPORTS void flip(const aclMat& src, aclMat& dest, int flipCode = 0);
+        CV_EXPORTS void transpose(const aclMat& src, aclMat& dest, int stream_id = 0);
+        CV_EXPORTS void flip(const aclMat& src, aclMat& dest, int flipCode = 0, int stream_id = 0);
     } /* end of namespace acl */
 
 } /* end of namespace cv */

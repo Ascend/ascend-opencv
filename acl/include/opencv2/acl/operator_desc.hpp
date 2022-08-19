@@ -78,13 +78,13 @@ namespace cv
        // Create operator description
        CV_EXPORTS OperatorDesc CreateOpDesc(const string opType, const vector<aclMat> &input_Mat, vector<aclMat> &output_Mat, aclFormat format = ACL_FORMAT_NHWC, Opdims config = FOUR_DIMS);
        // Compile and run the operator
-       CV_EXPORTS void compileAndRunop(OperatorDesc &opDesc, vector<aclDataBuffer *> &inputBuffers_, vector<aclDataBuffer *> &outputBuffers_, aclCxt *acl_context);
+       CV_EXPORTS void compileAndRunop(OperatorDesc &opDesc, vector<aclDataBuffer *> &inputBuffers_, vector<aclDataBuffer *> &outputBuffers_, aclCxt *acl_context, int stream_id);
        // Suitable for one input and one output
-       CV_EXPORTS void OneInAndOneOut(const aclMat &input, aclMat &output, const string opType);
+       CV_EXPORTS void OneInAndOneOut(const aclMat &input, aclMat &output, const string opType, int stream_id = 0);
        // Suitable for tow input and one output
-       CV_EXPORTS void TwoInAndOneOut(const aclMat &inputMat, const aclMat &inputMatOther, aclMat &outputMat, const string opType);
+       CV_EXPORTS void TwoInAndOneOut(const aclMat &inputMat, const aclMat &inputMatOther, aclMat &outputMat, const string opType, int stream_id = 0);
        // run the operator
-       CV_EXPORTS void Runop(vector<aclMat> &input, vector<aclMat> &output, OperatorDesc &opDesc);
+       CV_EXPORTS void Runop(vector<aclMat> &input, vector<aclMat> &output, OperatorDesc &opDesc, int stream_id);
 
     } /* end of namespace acl */
 

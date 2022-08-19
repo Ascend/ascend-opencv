@@ -159,29 +159,97 @@ void Common_Test::PrintLog(const string& funcname, int type)
         cout << funcname << "\t"
              << "Type: CV_8UC1" << endl;
         break;
+    case CV_8UC2:
+        cout << funcname << "\t"
+             << "Type: CV_8UC2" << endl;
+        break;
     case CV_8UC3:
         cout << funcname << "\t"
              << "Type: CV_8UC3" << endl;
+        break;
+    case CV_8UC4:
+        cout << funcname << "\t"
+             << "Type: CV_8UC4" << endl;
+        break;
+    case CV_8SC1:
+        cout << funcname << "\t"
+             << "Type: CV_8SC1" << endl;
+        break;
+    case CV_8SC2:
+        cout << funcname << "\t"
+             << "Type: CV_8SC2" << endl;
+        break;
+    case CV_8SC3:
+        cout << funcname << "\t"
+             << "Type: CV_8SC3" << endl;
+        break;
+    case CV_8SC4:
+        cout << funcname << "\t"
+             << "Type: CV_8SC4" << endl;
+        break;
+    case CV_16FC1:
+        cout << funcname << "\t"
+             << "Type: CV_16FC1" << endl;
+        break;
+    case CV_16FC2:
+        cout << funcname << "\t"
+             << "Type: CV_16FC2" << endl;
+        break;
+    case CV_16FC3:
+        cout << funcname << "\t"
+             << "Type: CV_16FC3" << endl;
+        break;
+    case CV_16FC4:
+        cout << funcname << "\t"
+             << "Type: CV_16FC4" << endl;
         break;
     case CV_32FC1:
         cout << funcname << "\t"
              << "Type: CV_32FC1" << endl;
         break;
+    case CV_32FC2:
+        cout << funcname << "\t"
+             << "Type: CV_32FC2" << endl;
+        break;
     case CV_32FC3:
         cout << funcname << "\t"
              << "Type: CV_32FC3" << endl;
+        break;
+    case CV_32FC4:
+        cout << funcname << "\t"
+             << "Type: CV_32FC4" << endl;
         break;
     case CV_32SC1:
         cout << funcname << "\t"
              << "Type: CV_32SC1" << endl;
         break;
+    case CV_32SC2:
+        cout << funcname << "\t"
+             << "Type: CV_32SC2" << endl;
+        break;
     case CV_32SC3:
         cout << funcname << "\t"
              << "Type: CV_32SC3" << endl;
         break;
+    case CV_32SC4:
+        cout << funcname << "\t"
+             << "Type: CV_32SC4" << endl;
+        break;
     case CV_64FC1:
         cout << funcname << "\t"
              << "Type: CV_64FC1" << endl;
+        break;
+    case CV_64FC2:
+        cout << funcname << "\t"
+             << "Type: CV_64FC2" << endl;
+        break;
+    case CV_64FC3:
+        cout << funcname << "\t"
+             << "Type: CV_64FC3" << endl;
+        break;
+    case CV_64FC4:
+        cout << funcname << "\t"
+             << "Type: CV_64FC4" << endl;
         break;
     default:
         break;

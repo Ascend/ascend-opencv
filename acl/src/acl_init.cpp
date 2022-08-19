@@ -69,6 +69,10 @@ namespace cv
             return global_aclenv;
         }
 
+        void wait_stream(aclCxt * acl_context, const int stream_id)
+        {
+            aclrtSynchronizeStream(acl_context->get_stream(stream_id));
+        }
 
         /////////////////////////create acl context////////////////////////
         /**

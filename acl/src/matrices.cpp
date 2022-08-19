@@ -108,7 +108,7 @@ namespace cv
             return -1;
         }
 
-        void merge(const vector<aclMat>& mv, aclMat& dest)
+        void merge(const vector<aclMat>& mv, aclMat& dest, int stream_id)
         {
             vector<aclDataBuffer *> inputBuffers_;
             vector<aclDataBuffer *> outputBuffers_;
@@ -159,7 +159,7 @@ namespace cv
             dest = temp;
             outputBuffers_.emplace_back(aclCreateDataBuffer(dest.data, dest.totalSize));
 
-            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, dest.acl_context);
+            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, dest.acl_context, stream_id);
 
             for (size_t i = 0; i < inputBuffers_.size(); i++)
                 AclSafeCall(aclDestroyDataBuffer(inputBuffers_[i]));
@@ -172,11 +172,12 @@ namespace cv
         
 
 /**
- * @brief : Dynamic shape reasoning, compiler problems
+ * @brief : Dynamic shape reasoning
  * 
  */
 
-        void transpose(const aclMat& src, aclMat& dest)
+
+        void transpose(const aclMat& src, aclMat& dest, int stream_id)
         {
             vector<aclDataBuffer *> inputBuffers_;
             vector<aclDataBuffer *> outputBuffers_;
@@ -238,9 +239,7 @@ namespace cv
                             opDesc.outputDesc.data(),
                             outputBuffers_.data(),
                             opDesc.opAttr,
-                            src.acl_context->get_stream(0)));
-
-            AclSafeCall(aclrtSynchronizeStream(src.acl_context->get_stream(0)));
+                            dest.acl_context->get_stream(stream_id)));
             
             AclSafeCall(aclDestroyDataBuffer(inputBuffers_[0]));
             AclSafeCall(aclDestroyDataBuffer(inputBuffers_[1]));
@@ -252,8 +251,8 @@ namespace cv
         }
 
 
-
-/*
+/* transposeD */
+#if 0
         void transpose(const aclMat& src, aclMat& dest)
         {
             vector<aclDataBuffer *> inputBuffers_;
@@ -279,7 +278,7 @@ namespace cv
             AclSafeCall(aclDestroyDataBuffer(inputBuffers_[0]));
             AclSafeCall(aclDestroyDataBuffer(outputBuffers_[0]));
         }
-*/
+#endif
 
         static int split_type(int depth)
         {
@@ -299,7 +298,7 @@ namespace cv
             return -1;
         }
 
-        void split(const aclMat& src, vector<aclMat>& mv)
+        void split(const aclMat& src, vector<aclMat>& mv, int stream_id)
         {
             vector<aclDataBuffer *> inputBuffers_;
             vector<aclDataBuffer *> outputBuffers_;
@@ -333,7 +332,7 @@ namespace cv
                 outputBuffers_.emplace_back(aclCreateDataBuffer(mv[i].data, mv[i].totalSize));
             }
 
-            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, src.acl_context);
+            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, src.acl_context, stream_id);
 
             AclSafeCall(aclDestroyDataBuffer(inputBuffers_[0]));
             for (int i = 0; i < num_split; ++i)
@@ -341,7 +340,7 @@ namespace cv
         }
 
 
-/*
+#if 0
         //disable
 
         void split(const aclMat& src, vector<aclMat>& mv)
@@ -427,9 +426,9 @@ namespace cv
             for (int i = 0; i < num_split; ++i)
                 AclSafeCall(aclDestroyDataBuffer(outputBuffers_[i]));
         }
-*/
+#endif
 
-        static void flip_(const aclMat& src, aclMat& dest, int axis)
+        static void flip_(const aclMat& src, aclMat& dest, int axis, int stream_id)
         {
             vector<aclDataBuffer *> inputBuffers_;
             vector<aclDataBuffer *> outputBuffers_;
@@ -456,26 +455,26 @@ namespace cv
 
             outputBuffers_.emplace_back(aclCreateDataBuffer(dest.data, dest.totalSize));
 
-            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, src.acl_context);
+            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, dest.acl_context, stream_id);
                 
             AclSafeCall(aclDestroyDataBuffer(inputBuffers_[0]));
             AclSafeCall(aclDestroyDataBuffer(inputBuffers_[1]));
             AclSafeCall(aclDestroyDataBuffer(outputBuffers_[0]));
         }
 
-        void flip(const aclMat& src, aclMat& dest, int filpCode)
+        void flip(const aclMat& src, aclMat& dest, int filpCode, int stream_id)
         {
             if (filpCode == 0) {
-                flip_(src, dest, 1);
+                flip_(src, dest, 1, stream_id);
             }
             else if (filpCode > 0) {
-                flip_(src, dest, 2);
+                flip_(src, dest, 2, stream_id);
             }
             else {
-                flip_(src, dest, 2);
+                flip_(src, dest, 2, stream_id);
                 aclMat tmp(dest.rows, dest.cols, dest.type(), dest.acl_context);
                 aclrtMemcpy(tmp.data, dest.totalSize, dest.data, dest.totalSize, ACL_MEMCPY_DEVICE_TO_DEVICE);
-                flip_(tmp, dest, 1);
+                flip_(tmp, dest, 1, stream_id);
             }
         }
     } /* end of namespace acl */

@@ -4,10 +4,10 @@ namespace cv
 {
     namespace acl
     {
-        aclMat abs(const aclMat& a) 
+        aclMat abs(const aclMat& a, int stream_id) 
         {
             aclMat dest(a.rows, a.cols, a.type(), a.acl_context);
-            OneInAndOneOut(a, dest, "Abs");
+            OneInAndOneOut(a, dest, "Abs", stream_id);
             return dest; 
         }
 
@@ -65,7 +65,7 @@ namespace cv
          
         }
 
-        void pow(const aclMat& src, double power, aclMat& dest)
+        void pow(const aclMat& src, double power, aclMat& dest, int stream_id)
         {
             vector<aclMat> input_Mat;
             vector<aclMat> output_Mat;
@@ -82,19 +82,23 @@ namespace cv
             opDesc.AddInputTensorDesc(dataType, shape2.size(), shape2.data(), ACL_FORMAT_NHWC);
 
             size_t size = aclGetTensorDescSize(opDesc.inputDesc[1]);
+            void *power_dev = power_data(power, dataType, size);
+
             inputBuffers_.emplace_back(aclCreateDataBuffer(src.data, src.totalSize));
-            inputBuffers_.emplace_back(aclCreateDataBuffer(power_data(power, dataType, size), size));
+            inputBuffers_.emplace_back(aclCreateDataBuffer(power_dev, size));
+
             outputBuffers_.emplace_back(aclCreateDataBuffer(dest.data, dest.totalSize));
 
-            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, dest.acl_context);
+            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, dest.acl_context, stream_id);
 
+            aclrtFree(power_dev);
             for (size_t i = 0; i < inputBuffers_.size(); i++)
                 AclSafeCall(aclDestroyDataBuffer(inputBuffers_[i]));
             for (size_t i = 0; i < outputBuffers_.size(); i++)
                 AclSafeCall(aclDestroyDataBuffer(outputBuffers_[i]));
         }
 
-        void add(const aclMat& src, const aclMat& other_src, aclMat& dest)
+        void add(const aclMat& src, const aclMat& other_src, aclMat& dest, int stream_id)
         {
             bool is_correct;
             
@@ -106,10 +110,10 @@ namespace cv
             is_correct &= (src.type() == dest.type());
             CV_Assert(is_correct);
 
-            TwoInAndOneOut(src, other_src, dest, "Add"); 
+            TwoInAndOneOut(src, other_src, dest, "Add", stream_id); 
         }
        
-        void divide(const aclMat& src, const aclMat& other_src, aclMat& dest)
+        void divide(const aclMat& src, const aclMat& other_src, aclMat& dest, int stream_id)
         {
             bool is_correct;
 
@@ -121,10 +125,10 @@ namespace cv
             is_correct &= (src.type() == dest.type());
             CV_Assert(is_correct);
 
-            TwoInAndOneOut(src, other_src, dest, "Div"); 
+            TwoInAndOneOut(src, other_src, dest, "Div", stream_id); 
         }
 
-        void exp(const aclMat& src, aclMat& dest)
+        void exp(const aclMat& src, aclMat& dest, int stream_id)
         {
             CV_Assert(src.rows == dest.rows && src.cols == dest.cols && src.type() == dest.type());
 
@@ -145,13 +149,13 @@ namespace cv
             opDesc.AddTensorAttr("scale", OP_FLOAT, 1.0);
             opDesc.AddTensorAttr("shift", OP_FLOAT, 0.0);
            
-            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, dest.acl_context);
+            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, dest.acl_context, stream_id);
 
             AclSafeCall(aclDestroyDataBuffer(inputBuffers_[0]));
             AclSafeCall(aclDestroyDataBuffer(outputBuffers_[0]));
         }
 
-        void log(const aclMat &src, aclMat &dest)
+        void log(const aclMat &src, aclMat &dest, int stream_id)
         {
             CV_Assert(src.rows == dest.rows && src.cols == dest.cols && src.type() == dest.type());
 
@@ -172,13 +176,13 @@ namespace cv
             opDesc.AddTensorAttr("scale", OP_FLOAT, 1.0);
             opDesc.AddTensorAttr("shift", OP_FLOAT, 0.0);
            
-            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, dest.acl_context);
+            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, dest.acl_context, stream_id);
 
             AclSafeCall(aclDestroyDataBuffer(inputBuffers_[0]));
             AclSafeCall(aclDestroyDataBuffer(outputBuffers_[0]));
         }
 
-        void max(const aclMat &src, const aclMat &other_src, aclMat &dest)
+        void max(const aclMat &src, const aclMat &other_src, aclMat &dest, int stream_id)
         {
             bool is_correct;
 
@@ -190,10 +194,10 @@ namespace cv
             is_correct &= (src.type() == dest.type());
             CV_Assert(is_correct);
 
-            TwoInAndOneOut(src, other_src, dest, "Maximum"); 
+            TwoInAndOneOut(src, other_src, dest, "Maximum", stream_id); 
         }
 
-        void min(const aclMat &src, const aclMat &other_src, aclMat &dest)
+        void min(const aclMat &src, const aclMat &other_src, aclMat &dest, int stream_id)
         {
             bool is_correct;
 
@@ -205,14 +209,14 @@ namespace cv
             is_correct &= (src.type() == dest.type());
             CV_Assert(is_correct);
 
-            TwoInAndOneOut(src, other_src, dest, "Minimum"); 
+            TwoInAndOneOut(src, other_src, dest, "Minimum", stream_id); 
         }
 
-        void sqrt(const aclMat &src, aclMat &dest)
+        void sqrt(const aclMat &src, aclMat &dest, int stream_id)
         {
             CV_Assert(src.rows == dest.rows && src.cols == dest.cols && src.type() == dest.type());
 
-            OneInAndOneOut(src, dest, "Sqrt");
+            OneInAndOneOut(src, dest, "Sqrt", stream_id);
         }
 
     } /* end of namespace acl */

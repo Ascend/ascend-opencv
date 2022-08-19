@@ -199,7 +199,7 @@ namespace cv
             inputBuffers_.emplace_back(aclCreateDataBuffer(nullptr, 0));
             outputBuffers_.emplace_back(aclCreateDataBuffer(newMat.data, newMat.totalSize));
 
-            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, this->acl_context);
+            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, this->acl_context, 0);
 
             *this = newMat;
 

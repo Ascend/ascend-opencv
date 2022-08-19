@@ -28,8 +28,9 @@ void PERF_TEST::Test_Lookuptable(aclCxt *acl_context_0)
 
 void PERF_TEST::Test_Merge(aclCxt *acl_context)
 {
-    int val;
+    int val, n;
     int valmax = 8192;
+    int cycle_index = 100;
     double begin, end, time, acltime;
     Common_Test test;
 
@@ -41,7 +42,7 @@ void PERF_TEST::Test_Merge(aclCxt *acl_context)
         test.PrintLog("Perf test : Function: merge()", srcType[i]);
         for (val = 8; val <= valmax; val *= 2)
         {
-            int n = 100;
+            n = cycle_index;
             Mat mat_src1(val, val, srcType[i], Scalar(1));
             Mat mat_src2(val, val, srcType[i], Scalar(2));
             Mat mat_src3(val, val, srcType[i], Scalar(3));
@@ -71,14 +72,17 @@ void PERF_TEST::Test_Merge(aclCxt *acl_context)
             while (n--)
                 merge(src, mat_dest);
             end = static_cast<double>(getTickCount());
-            time = (end - begin) / getTickFrequency();
+            time = (end - begin) / getTickFrequency() / cycle_index;
 
-            n = 100;
+            n = (cycle_index - 1);
+            merge(acl_src, aclmat_dest);
+            wait_stream(acl_context);
             begin = static_cast<double>(getTickCount());
             while (n--)
-                merge(acl_src, aclmat_dest);
+                merge(acl_src, aclmat_dest, 1);
+            wait_stream(acl_context, 1);
             end = static_cast<double>(getTickCount());
-            acltime = (end - begin) / getTickFrequency();
+            acltime = (end - begin) / getTickFrequency() / (cycle_index - 1);
             aclmat_dest.download(mat_dest1);
             bool ret = test.Test_Diff(mat_dest, mat_dest1);
             ASSERT_TRUE(ret);
@@ -94,18 +98,19 @@ void PERF_TEST::Test_Merge(aclCxt *acl_context)
 
 void PERF_TEST::Test_Transpose(aclCxt *acl_context)
 {
-    int val;
+    int val, n;
     int valmax = 8192;
+    int cycle_index = 100;
     double begin, end, time, acltime;
     Common_Test test;
 
-    vector<int> type{CV_32FC1, CV_32SC1};
+    vector<int> type{CV_32FC1};
     for (size_t i = 0; i < type.size(); ++i)
     {
         test.PrintLog("Perf test : Function: transpose()", type[i]);
         for (val = 8; val <= valmax; val *= 2)
         {
-            int n = 100;
+            n = cycle_index;
             Mat mat_src(val, val, type[i]);
             Mat mat_dest(val, val, type[i]);
             Mat mat_dest1(val, val, type[i]);
@@ -119,14 +124,17 @@ void PERF_TEST::Test_Transpose(aclCxt *acl_context)
             while (n--)
                 transpose(mat_src, mat_dest);
             end = static_cast<double>(getTickCount());
-            time = (end - begin) / getTickFrequency();
+            time = (end - begin) / getTickFrequency() / cycle_index;
 
-            n = 100;
+            n = (cycle_index - 1);
+            transpose(aclmat_src, aclmat_dest);
+            wait_stream(acl_context);
             begin = static_cast<double>(getTickCount());
             while (n--)
-                transpose(aclmat_src, aclmat_dest);
+                transpose(aclmat_src, aclmat_dest, 1);
+            wait_stream(acl_context, 1);
             end = static_cast<double>(getTickCount());
-            acltime = (end - begin) / getTickFrequency();
+            acltime = (end - begin) / getTickFrequency() / (cycle_index - 1);
 
             aclmat_dest.download(mat_dest1);
             bool ret = test.Test_Diff(mat_dest, mat_dest1);
@@ -142,8 +150,9 @@ void PERF_TEST::Test_Transpose(aclCxt *acl_context)
 
 void PERF_TEST::Test_Split(aclCxt *acl_context)
 {
-    int val;
+    int val, n;
     int valmax = 8192;
+    int cycle_index = 100;
     double begin, end, time, acltime;
     Common_Test test;
 
@@ -155,7 +164,7 @@ void PERF_TEST::Test_Split(aclCxt *acl_context)
         test.PrintLog("Perf test : Function: split()", srcType[i]);
         for (val = 8; val <= valmax; val *= 2)
         {
-            int n = 100;
+            n = cycle_index;
             Mat mat_src(val, val, srcType[i]);
             Mat mat_dest1(val, val, destType[i]);
             Mat mat_dest2(val, val, destType[i]);
@@ -182,14 +191,17 @@ void PERF_TEST::Test_Split(aclCxt *acl_context)
             while (n--)
                 split(mat_src, dest);
             end = static_cast<double>(getTickCount());
-            time = (end - begin) / getTickFrequency();
+            time = (end - begin) / getTickFrequency() / cycle_index;
 
-            n = 100;
+            n = (cycle_index - 1);
+            split(aclmat_src, acl_dest);
+            wait_stream(acl_context);
             begin = static_cast<double>(getTickCount());
             while (n--)
-                split(aclmat_src, acl_dest);
+                split(aclmat_src, acl_dest, 1);
+            wait_stream(acl_context, 1);
             end = static_cast<double>(getTickCount());
-            acltime = (end - begin) / getTickFrequency();
+            acltime = (end - begin) / getTickFrequency() / (cycle_index - 1);
 
             (acl_dest.data())[0].download(mat_dest1);
             (acl_dest.data())[1].download(mat_dest2);
@@ -210,11 +222,11 @@ void PERF_TEST::Test_Split(aclCxt *acl_context)
 
 }
 
-
 void PERF_TEST::Test_Flip(aclCxt *acl_context)
 {
-    int val;
+    int val, n;
     int valmax = 8192;
+    int cycle_index = 100;
     double begin, end, time, acltime;
     Common_Test test;
 
@@ -224,7 +236,7 @@ void PERF_TEST::Test_Flip(aclCxt *acl_context)
         test.PrintLog("Perf test : Function: flip()", type[i]);
         for (val = 8; val <= valmax; val *= 2)
         {
-            int n = 100;
+            n = cycle_index;
             Mat mat_src(val, val, type[i]);
             Mat mat_dest(val, val, type[i]);
             Mat mat_dest1(val, val, type[i]);
@@ -238,15 +250,18 @@ void PERF_TEST::Test_Flip(aclCxt *acl_context)
             while (n--)
                 flip(mat_src, mat_dest, 0);
             end = static_cast<double>(getTickCount());
-            time = (end - begin) / getTickFrequency();
+            time = (end - begin) / getTickFrequency() / cycle_index;
 
-            n = 100;
+            n = (cycle_index - 1);
+            flip(aclmat_src, aclmat_dest, 0);
+            wait_stream(acl_context);
             begin = static_cast<double>(getTickCount());
             while (n--)
-                flip(aclmat_src, aclmat_dest, 0);
+                flip(aclmat_src, aclmat_dest, 0, 1);
+            wait_stream(acl_context, 1);
             end = static_cast<double>(getTickCount());
-            acltime = (end - begin) / getTickFrequency();
-
+            acltime = (end - begin) / getTickFrequency() / (cycle_index - 1);
+        
             aclmat_dest.download(mat_dest1);
             bool ret = test.Test_Diff(mat_dest, mat_dest1);
             ASSERT_TRUE(ret);
