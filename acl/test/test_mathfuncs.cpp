@@ -5,11 +5,12 @@ void PERF_TEST::Test_Abs(aclCxt *acl_context)
 {
     int val, n;
     int valmax = 8192;
-    int cycle_index = 100;
+    int cycle_index = 10;
     double begin, end, time, acltime;
     Common_Test test;
 
-    vector<int> type{CV_32FC1};
+    //vector<int> type{CV_32FC1};
+    vector<int> type{CV_32FC1,CV_32SC1};
     for (size_t i = 0; i < type.size(); ++i)
     {
         test.PrintLog("Perf test : Function: Abs()", type[i]);
@@ -55,11 +56,12 @@ void PERF_TEST::Test_Pow(aclCxt *acl_context)
 {
     int val, n;
     int valmax = 8192;
-    int cycle_index = 100;
+    int cycle_index = 10;
     double begin, end, time, acltime;
     Common_Test test;
 
-    vector<int> type{CV_32FC1};
+    //vector<int> type{CV_32FC1};
+    vector<int> type{CV_8UC1, CV_32FC1,CV_32SC1};
     for (size_t i = 0; i < type.size(); ++i)
     {
         test.PrintLog("Perf test : Function: Pow()", type[i]);
@@ -106,11 +108,11 @@ void PERF_TEST::Test_Sqrt(aclCxt *acl_context)
 {
     int val, n;
     int valmax = 8192;
-    int cycle_index = 100;
+    int cycle_index = 10;
     double begin, end, time, acltime;
     Common_Test test;
-    vector<int> type{CV_32FC1};
-
+    //vector<int> type{CV_32FC1};
+    vector<int> type{CV_32FC1,CV_64FC1};
     for (size_t i = 0; i < type.size(); ++i)
     {
         for (val = 8; val <= valmax; val *= 2)
@@ -157,11 +159,11 @@ void PERF_TEST::Test_Add(aclCxt *acl_context)
 {
     int val, n;
     int valmax = 8192;
-    int cycle_index = 100;
+    int cycle_index = 10;
     double begin, end, time, acltime;
     Common_Test test;
-    vector<int> type{CV_32FC1};
-    
+    //vector<int> type{CV_32FC1};
+    vector<int> type{CV_8UC1,CV_32FC1, CV_32SC1, CV_64FC1};
     for (size_t i = 0; i < type.size(); ++i)
     {
         for (val = 8; val <= valmax; val *= 2)
@@ -213,11 +215,11 @@ void PERF_TEST::Test_Divide(aclCxt *acl_context)
 {
     int val, n;
     int valmax = 8192;
-    int cycle_index = 100;
+    int cycle_index = 10;
     double begin, end, time, acltime;
     Common_Test test;
-    vector<int> type{CV_32FC1};
-    
+    //vector<int> type{CV_32FC1};
+    vector<int> type{CV_8UC1,CV_32FC1, CV_32SC1};
     for (size_t i = 0; i < type.size(); ++i)
     {
         for (val = 8; val <= valmax; val *= 2)
@@ -268,11 +270,12 @@ void PERF_TEST::Test_Exp(aclCxt *acl_context)
 {
     int val, n;
     int valmax = 8192;
-    int cycle_index = 100;
+    int cycle_index = 10;
     double begin, end, time, acltime;
     Common_Test test;
-    vector<int> type{CV_32FC1};
     
+    //vector<int> type{CV_32FC1};
+    vector<int> type{CV_32FC1,CV_64FC1};
     for (size_t i = 0; i < type.size(); ++i)
     {
         for (val = 8; val <= valmax; val *= 2)
@@ -319,11 +322,11 @@ void PERF_TEST::Test_Log(aclCxt *acl_context)
 {
     int val, n;
     int valmax = 8192;
-    int cycle_index = 100;
+    int cycle_index = 10;
     double begin, end, time, acltime;
     Common_Test test;
-    vector<int> type{CV_32FC1};
-    
+    //vector<int> type{CV_32FC1};
+    vector<int> type{CV_32FC1,CV_64FC1};
     for (size_t i = 0; i < type.size(); ++i)
     {
         for (val = 8; val <= valmax; val *= 2)
@@ -370,11 +373,11 @@ void PERF_TEST::Test_Max(aclCxt *acl_context)
 {
     int val, n;
     int valmax = 8192;
-    int cycle_index = 100;
+    int cycle_index = 10;
     double begin, end, time, acltime;
     Common_Test test;
-    vector<int> type{CV_32FC2};
-    
+   // vector<int> type{CV_32FC2};
+    vector<int> type{CV_32FC2,CV_32SC2, CV_64FC2};
     for (size_t i = 0; i < type.size(); ++i)
     {
         for (val = 8; val <= valmax; val *= 2)
@@ -425,16 +428,16 @@ void PERF_TEST::Test_Min(aclCxt *acl_context)
 {
     int val, n;
     int valmax = 8192;
-    int cycle_index = 100;
+    int cycle_index = 10;
     double begin, end, time, acltime;
     Common_Test test;
-    vector<int> type{CV_32FC3};
-    
+    //vector<int> type{CV_32FC3};
+    vector<int> type{CV_32FC3,CV_32SC3, CV_64FC3};
     for (size_t i = 0; i < type.size(); ++i)
     {
         for (val = 8; val <= valmax; val *= 2)
         {
-            int n = cycle_index;
+            n = cycle_index;
             Mat mat_src1(val, val, type[i]);
             Mat mat_src2(val, val, type[i]);
             Mat mat_dest(val, val, type[i]);

@@ -5,7 +5,7 @@ void PERF_TEST::Test_MatMul(aclCxt *acl_context)
 {
     int val, n;
     int valmax = 4096;
-    int cycle_index = 100;
+    int cycle_index = 10;//100;
     double begin, end, time, acltime;
     Common_Test test;
     vector<int> type{CV_32FC1};
@@ -61,7 +61,7 @@ void PERF_TEST::Test_Convolution(aclCxt *acl_context)
 {
     int val, n;
     int valmax = 4096;
-    int cycle_index = 100;
+    int cycle_index = 10;
     double begin, end, time, acltime;
     Common_Test test;
     vector<int> type{CV_32FC1};

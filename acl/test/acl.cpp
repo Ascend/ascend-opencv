@@ -7,9 +7,8 @@ namespace opencv_test
 {
     namespace
     {
-        aclCxt *acl_context_0 = set_device("../../modules/acl/test/acl.json", 0, 3);
+        aclCxt *acl_context_0 = set_device("../../modules/acl/test/acl.json", 2, 3);
         ////////////////////////////////////////////////////Correctness_test//////////////////////////////////////////////////////// 
-#if 0
         /* range: rows: 1 ~ 64, cols: 1 ~ 64, type: 0 ~ 7 
          * test function:
          * config: MEMORY_ALIGN
@@ -178,7 +177,7 @@ namespace opencv_test
             AclMat_Test test;
             test.Test_operator_div(acl_context_0);
         }
-#endif
+       
 ////////////////////////////////////////////////////Perf_test//////////////////////////////////////////////////////// 
 
         TEST(Operator, add)
@@ -282,13 +281,7 @@ namespace opencv_test
             PERF_TEST test;
             test.Test_Split(acl_context_0);
         }
-/*
-        TEST(Matrices, lookuptable)
-        {
-            PERF_TEST test;
-            test.Test_Lookuptable(acl_context_0);
-        }
-*/
+
 
         TEST(Matrices, transpose)
         {
@@ -299,10 +292,8 @@ namespace opencv_test
         TEST(Matrices, flip)
         {
             PERF_TEST test;
-            test.Test_Flip(acl_context_0);
+            test.Test_Flip(acl_context_0); 
             release_device(acl_context_0);
         }
-
-
     }               
 }

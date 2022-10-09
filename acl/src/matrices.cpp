@@ -246,8 +246,9 @@ namespace cv
             AclSafeCall(aclDestroyDataBuffer(inputBuffers_host[0]));
             AclSafeCall(aclDestroyDataBuffer(inputBuffers_host[1]));
             AclSafeCall(aclDestroyDataBuffer(outputBuffers_[0]));
-            aclrtFreeHost(perm);
-            aclrtFreeHost(host_data);
+            AclSafeCall(aclrtFree(dev));
+            AclSafeCall(aclrtFreeHost(perm));
+            AclSafeCall(aclrtFreeHost(host_data));
         }
 
 
@@ -460,6 +461,7 @@ namespace cv
             AclSafeCall(aclDestroyDataBuffer(inputBuffers_[0]));
             AclSafeCall(aclDestroyDataBuffer(inputBuffers_[1]));
             AclSafeCall(aclDestroyDataBuffer(outputBuffers_[0]));
+            AclSafeCall(aclrtFree(dev));
         }
 
         void flip(const aclMat& src, aclMat& dest, int filpCode, int stream_id)

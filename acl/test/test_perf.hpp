@@ -28,10 +28,6 @@ public:
     CV_EXPORTS void Test_Split(aclCxt *acl_context);
     CV_EXPORTS void Test_Transpose(aclCxt *acl_context);
     CV_EXPORTS void Test_Flip(aclCxt *acl_context);
-
-    CV_EXPORTS void Test_other(aclCxt *acl_context);
-    CV_EXPORTS void Test_other1(aclCxt *acl_context);
-    CV_EXPORTS void Test_other2();
 };
 
 #endif
