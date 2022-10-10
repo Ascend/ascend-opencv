@@ -405,9 +405,7 @@ inline void ensureSizeIsEnough(Size size, int type, ALIGNMENT config,
                                aclMat &m) {
   ensureSizeIsEnough(size.height, size.width, type, m, config);
 }
-
 } /* end of namespace acl */
-
 } /* end of namespace cv */
 
 #endif

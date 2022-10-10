@@ -88,6 +88,7 @@ void AclMat_Test::Test_constructor_UNALIGNED(aclCxt *acl_context) {
   Common_Test test;
   int rows, cols, type;
   bool ret;
+  constexpr int rand_data_range = 32;
   const int rowsMax = 128;
   const int colsMax = 128;
   const int typeMax = 7;
@@ -97,7 +98,7 @@ void AclMat_Test::Test_constructor_UNALIGNED(aclCxt *acl_context) {
       for (cols = 1; cols < colsMax; cols++) {
         Mat mat_src(rows, cols, type);
         aclMat aclmat_src(rows, cols, type, acl_context);
-        test.SetDataRange(mat_src, 32);
+        test.SetDataRange(mat_src, rand_data_range);
         aclmat_src.upload(mat_src);
         ret = test.Test_Diff(aclmat_src, mat_src);
         ASSERT_TRUE(ret);
@@ -112,7 +113,7 @@ void AclMat_Test::Test_constructor_UNALIGNED(aclCxt *acl_context) {
     for (rows = 1; rows < rowsMax; rows++) {
       for (cols = 1; cols < colsMax; cols++) {
         Mat mat_src(cv::Size(cols, rows), type);
-        test.SetDataRange(mat_src, 32);
+        test.SetDataRange(mat_src, rand_data_range);
         aclMat aclmat_src(cv::Size(cols, rows), type, acl_context);
         aclmat_src.upload(mat_src);
         ret = test.Test_Diff(aclmat_src, mat_src);
@@ -129,6 +130,7 @@ void AclMat_Test::Test_constructor_ALIGN(aclCxt *acl_context) {
   Common_Test test;
   int rows, cols, type;
   bool ret;
+  constexpr int rand_data_range = 32;
   const int rowsMax = 128;
   const int colsMax = 128;
   const int typeMax = 7;
@@ -137,7 +139,7 @@ void AclMat_Test::Test_constructor_ALIGN(aclCxt *acl_context) {
     for (rows = 1; rows < rowsMax; rows++) {
       for (cols = 1; cols < colsMax; cols++) {
         Mat mat_src(rows, cols, type);
-        test.SetDataRange(mat_src, 32);
+        test.SetDataRange(mat_src, rand_data_range);
         aclMat aclmat_src(rows, cols, type, acl_context, MEMORY_ALIGN);
         aclmat_src.upload(mat_src, MEMORY_ALIGN);
         ret = test.Test_Diff(aclmat_src, mat_src, MEMORY_ALIGN);
@@ -153,7 +155,7 @@ void AclMat_Test::Test_constructor_ALIGN(aclCxt *acl_context) {
     for (rows = 1; rows < rowsMax; rows++) {
       for (cols = 1; cols < colsMax; cols++) {
         Mat mat_src(cv::Size(cols, rows), type);
-        test.SetDataRange(mat_src, 32);
+        test.SetDataRange(mat_src, rand_data_range);
         aclMat aclmat_src(cv::Size(cols, rows), type, acl_context,
                           MEMORY_ALIGN);
         aclmat_src.upload(mat_src, MEMORY_ALIGN);
@@ -258,22 +260,24 @@ void AclMat_Test::Test_constructor_RANGE(aclCxt *acl_context_0) {
   const int rangerowsMax = 64;
   const int rangecolsMax = 64;
   const int typeMax = 7;
+  constexpr int large_mat_range = 4;
+  constexpr int small_mat_range = 2;
 
   for (type = 0; type < typeMax; type++) {
-    for (rangerows = 4; rangerows < rangerowsMax; rangerows++) {
-      for (rangecols = 4; rangecols < rangecolsMax; rangecols++) {
+    for (rangerows = large_mat_range; rangerows < rangerowsMax; rangerows++) {
+      for (rangecols = large_mat_range; rangecols < rangecolsMax; rangecols++) {
         Mat mat_src(rows, cols, type);
         Mat mat_dest(rows, cols, type);
         test.SetDataRange(mat_src);
         test.SetDataRange(mat_dest);
 
-        Mat mat_rangesrc(mat_src, cv::Range(2, rangerows),
-                         cv::Range(2, rangecols));
-        Mat mat_rangedest(mat_dest, cv::Range(2, rangerows),
-                          cv::Range(2, rangecols));
+        Mat mat_rangesrc(mat_src, cv::Range(small_mat_range, rangerows),
+                         cv::Range(small_mat_range, rangecols));
+        Mat mat_rangedest(mat_dest, cv::Range(small_mat_range, rangerows),
+                          cv::Range(small_mat_range, rangecols));
         aclMat aclmat_src(rows, cols, type, mat_src.data, acl_context_0);
-        aclMat aclmat_range(aclmat_src, cv::Range(2, rangerows),
-                            cv::Range(2, rangecols));
+        aclMat aclmat_range(aclmat_src, cv::Range(small_mat_range, rangerows),
+                            cv::Range(small_mat_range, rangecols));
         aclmat_range.download(mat_rangedest);
         ret = test.Test_Diff(mat_rangesrc, mat_rangedest);
         ASSERT_TRUE(ret);
@@ -290,7 +294,9 @@ void AclMat_Test::Test_constructor_ROI(aclCxt *acl_context_0) {
   {
     int rows = 6, cols = 8;
     int type = CV_8UC1;
-    cv::Rect roi(2, 2, 1, 1);
+    constexpr int test_val_1 = 1;
+    constexpr int test_val_2 = 2;
+    cv::Rect roi(test_val_2, test_val_2, test_val_1, test_val_1);
     bool ret;
     Mat mat_src(rows, cols, type);
     Mat mat_dest(rows, cols, type);
@@ -310,8 +316,10 @@ void AclMat_Test::Test_constructor_ROI(aclCxt *acl_context_0) {
 
   {
     int rows = 12, cols = 61;
+    constexpr int test_val_2 = 2;
+    constexpr int test_val_8 = 8;
     int type = CV_16UC3;
-    cv::Rect roi(8, 8, 2, 2);
+    cv::Rect roi(test_val_8, test_val_8, test_val_2, test_val_2);
     bool ret;
     Mat mat_src(rows, cols, type);
     Mat mat_dest(rows, cols, type);
@@ -332,7 +340,11 @@ void AclMat_Test::Test_constructor_ROI(aclCxt *acl_context_0) {
   {
     int rows = 16, cols = 80;
     int type = CV_32FC3;
-    cv::Rect roi(8, 4, 1, 3);
+    constexpr int test_val_1 = 1;
+    constexpr int test_val_3 = 3;
+    constexpr int test_val_4 = 4;
+    constexpr int test_val_8 = 8;
+    cv::Rect roi(test_val_8, test_val_4, test_val_1, test_val_3);
     bool ret;
     Mat mat_src(rows, cols, type);
     Mat mat_dest(rows, cols, type);
@@ -361,10 +373,11 @@ void AclMat_Test::Test_constructor_MAT(aclCxt *acl_context_0) {
   const int rowsMax = 1048;
   const int colsMax = 1048;
   const int typeMax = 7;
+  constexpr int lval = 1000;
 
   for (type = 0; type < typeMax; type++) {
-    for (rows = 1000; rows < rowsMax; rows++) {
-      for (cols = 1000; cols < colsMax; cols++) {
+    for (rows = lval; rows < rowsMax; rows++) {
+      for (cols = lval; cols < colsMax; cols++) {
         Mat mat_src(rows, cols, type);
         Mat mat_dest(rows, cols, type);
         test.SetDataRange(mat_src);
@@ -387,11 +400,12 @@ void AclMat_Test::Test_DATA_TRANSFER(aclCxt *acl_context_0) {
   bool ret;
   const int rowsMax = 1048;
   const int colsMax = 1048;
+  constexpr int lval = 1024;
   const int typeMax = 7;
 
   for (type = 0; type < typeMax; type++) {
-    for (rows = 1000; rows < rowsMax; rows++) {
-      for (cols = 1000; cols < colsMax; cols++) {
+    for (rows = lval; rows < rowsMax; rows++) {
+      for (cols = lval; cols < colsMax; cols++) {
         Mat mat_src(rows, cols, type);
         Mat mat_dest(rows, cols, type);
 
@@ -410,8 +424,8 @@ void AclMat_Test::Test_DATA_TRANSFER(aclCxt *acl_context_0) {
        << endl;
 
   for (type = 0; type < typeMax; type++) {
-    for (rows = 1000; rows < rowsMax; rows++) {
-      for (cols = 1000; cols < colsMax; cols++) {
+    for (rows = lval; rows < rowsMax; rows++) {
+      for (cols = lval; cols < colsMax; cols++) {
         Mat mat_src(rows, cols, type);
         Mat mat_dest(rows, cols, type);
 
@@ -437,10 +451,11 @@ void AclMat_Test::Test_DATA_TRANSFERASYNC(aclCxt *acl_context_0) {
   const int rowsMax = 1048;
   const int colsMax = 1048;
   const int typeMax = 7;
+  constexpr int lval = 1024;
 
   for (type = 0; type < typeMax; type++) {
-    for (rows = 1000; rows < rowsMax; rows++) {
-      for (cols = 1000; cols < colsMax; cols++) {
+    for (rows = lval; rows < rowsMax; rows++) {
+      for (cols = lval; cols < colsMax; cols++) {
         Mat mat_src(rows, cols, type);
         Mat mat_dest(rows, cols, type);
 
@@ -460,8 +475,8 @@ void AclMat_Test::Test_DATA_TRANSFERASYNC(aclCxt *acl_context_0) {
        << endl;
 
   for (type = 0; type < typeMax; type++) {
-    for (rows = 1000; rows < rowsMax; rows++) {
-      for (cols = 1000; cols < colsMax; cols++) {
+    for (rows = lval; rows < rowsMax; rows++) {
+      for (cols = lval; cols < colsMax; cols++) {
         Mat mat_src(rows, cols, type);
         Mat mat_dest(rows, cols, type);
 
@@ -535,10 +550,11 @@ void AclMat_Test::Test_swap(aclCxt *acl_context_0) {
   const int rowsMax = 1048;
   const int colsMax = 1048;
   const int typeMax = 7;
+  constexpr int lval = 1024;
 
   for (type = 0; type < typeMax; type++) {
-    for (rows = 1024; rows < rowsMax; rows++) {
-      for (cols = 1024; cols < colsMax; cols++) {
+    for (rows = lval; rows < rowsMax; rows++) {
+      for (cols = lval; cols < colsMax; cols++) {
         Mat mat_src(rows, cols, type);
         Mat mat_dest(rows, cols, type);
 
@@ -570,20 +586,22 @@ void AclMat_Test::Test_operator_add(aclCxt *acl_context) {
   Common_Test test;
   int rows, cols;
   bool ret;
+  constexpr int rand_data_range = 32;
+  constexpr int lval = 1024;
   const int rowsMax = 1048;
   const int colsMax = 1048;
 
   vector<int> type{CV_8UC1, CV_8UC3, CV_32FC1, CV_32FC3, CV_32SC1, CV_32SC3};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Correctness test: Functoin: operator+=()", type[i]);
-    for (rows = 1024; rows < rowsMax; rows++) {
-      for (cols = 1024; cols < colsMax; cols++) {
+    for (rows = lval; rows < rowsMax; rows++) {
+      for (cols = lval; cols < colsMax; cols++) {
         Mat mat_src(rows, cols, type[i]);
         Mat mat_dest(rows, cols, type[i]);
         Mat mat_dest1(rows, cols, type[i]);
 
-        test.SetDataRange(mat_src, 32);
-        test.SetDataRange(mat_dest, 32);
+        test.SetDataRange(mat_src, rand_data_range);
+        test.SetDataRange(mat_dest, rand_data_range);
 
         aclMat aclmat_src(rows, cols, type[i], mat_src.data, acl_context,
                           MEMORY_ALIGN);
@@ -609,13 +627,14 @@ void AclMat_Test::Test_operator_sub(aclCxt *acl_context) {
   bool ret;
   const int rowsMax = 1048;
   const int colsMax = 1048;
+  constexpr int lval = 1024;
 
   vector<int> type{CV_8UC1,  CV_8UC3,  CV_32FC1, CV_32FC3,
                    CV_32SC1, CV_32SC3, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Correctness test: Functoin: operator-=()", type[i]);
-    for (rows = 1024; rows < rowsMax; rows++) {
-      for (cols = 1024; cols < colsMax; cols++) {
+    for (rows = lval; rows < rowsMax; rows++) {
+      for (cols = lval; cols < colsMax; cols++) {
         Mat mat_src(rows, cols, type[i], Scalar(1, 2, 3));
         Mat mat_dest(rows, cols, type[i], Scalar(4, 6, 8));
         Mat mat_dest1(rows, cols, type[i]);
@@ -644,13 +663,14 @@ void AclMat_Test::Test_operator_div(aclCxt *acl_context) {
   bool ret;
   const int rowsMax = 1048;
   const int colsMax = 1048;
+  constexpr int lval = 1024;
 
   vector<int> type{CV_8UC1,  CV_8UC3,  CV_32FC1, CV_32FC3,
                    CV_32SC1, CV_32SC3, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Correctness test: Functoin: operator/=()", type[i]);
-    for (rows = 1024; rows < rowsMax; rows++) {
-      for (cols = 1024; cols < colsMax; cols++) {
+    for (rows = lval; rows < rowsMax; rows++) {
+      for (cols = lval; cols < colsMax; cols++) {
         Mat mat_src(rows, cols, type[i], Scalar(1, 2, 4));
         Mat mat_dest(rows, cols, type[i], Scalar(4, 6, 8));
         Mat mat_dest1(rows, cols, type[i]);
@@ -677,18 +697,20 @@ void AclMat_Test::Test_operator_mul(aclCxt *acl_context) {
   Common_Test test;
   int val;
   bool ret;
+  constexpr int rand_data_range = 32;
   const int valMax = 1048;
+  constexpr int lval = 1024;
 
   vector<int> type{CV_32FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Correctness test: Functoin: operator*=()", type[i]);
-    for (val = 1024; val < valMax; val++) {
+    for (val = lval; val < valMax; val++) {
       Mat mat_src(val, val, type[i]);
       Mat mat_dest(val, val, type[i]);
       Mat mat_dest1(val, val, type[i]);
 
-      test.SetDataRange(mat_src, 32);
-      test.SetDataRange(mat_dest, 32);
+      test.SetDataRange(mat_src, rand_data_range);
+      test.SetDataRange(mat_dest, rand_data_range);
 
       aclMat aclmat_src(val, val, type[i], mat_src.data, acl_context);
       aclMat aclmat_dest(val, val, type[i], mat_dest.data, acl_context);

@@ -48,9 +48,7 @@ CV_EXPORTS void wait_stream(aclCxt *context, const int stream_id = 0);
 CV_EXPORTS aclCxt *set_device(const char *config_path, int device_id = 0,
                               int stream_count = 1);
 CV_EXPORTS void release_device(aclCxt *context);
-
 } /* end of namespace acl */
-
 } /* end of namespace cv */
 
 #endif

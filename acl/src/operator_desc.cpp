@@ -160,7 +160,5 @@ void TwoInAndOneOut(const aclMat& inputMat, const aclMat& inputMatOther,
   OperatorDesc opDesc = CreateOpDesc(opType, input_Mat, output_Mat);
   Runop(input_Mat, output_Mat, opDesc, stream_id);
 }
-
 } /* end of namespace acl */
-
 } /* end of namespace cv */

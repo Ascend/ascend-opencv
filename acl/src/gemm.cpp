@@ -63,7 +63,7 @@ void Convolution(const aclMat& src, const aclMat& kernel, aclMat& dest,
       (src.cols + padsList[2] + padsList[3] - (1 * (kernel.cols - 1) + 1)) /
           stridesList[3] +
       1;
-  aclMat acl_dest{dest_rows, dest_cols, src.type(), src.acl_context};
+  aclMat acl_dest {dest_rows, dest_cols, src.type(), src.acl_context};
 
   vector<int64_t> shape{1, 1, src.rows, src.cols};
   vector<int64_t> shape1{1, 1, kernel.rows, kernel.cols};
@@ -99,5 +99,4 @@ void Convolution(const aclMat& src, const aclMat& kernel, aclMat& dest,
     AclSafeCall(aclDestroyDataBuffer(outputBuffers_[i]));
 }
 } /* end of namespace acl */
-
 } /* end of namespace cv */

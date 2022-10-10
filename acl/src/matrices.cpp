@@ -5,7 +5,7 @@ using namespace cv;
 using namespace cv::acl;
 namespace cv {
 namespace acl {
-        
+
 static int merge_type(int depth, int channels) {
   switch (depth) {
     case CV_8U:
@@ -18,8 +18,9 @@ static int merge_type(int depth, int channels) {
       return CV_32SC(channels);
     case CV_64F:
       return CV_64FC(channels);
+    default:
+      return -1;
   }
-  return -1;
 }
 
 void merge(const vector<aclMat> &mv, aclMat &dest, int stream_id) {
@@ -29,7 +30,7 @@ void merge(const vector<aclMat> &mv, aclMat &dest, int stream_id) {
   OperatorDesc opDesc("Concat");
   aclDataType dataType = type_transition(mv[0].depth());
 
-  vector<int64_t> inputShape{};
+  vector<int64_t> inputShape {};
   opDesc.AddInputTensorDesc(ACL_INT32, inputShape.size(), inputShape.data(),
                             ACL_FORMAT_ND);
 
@@ -47,16 +48,21 @@ void merge(const vector<aclMat> &mv, aclMat &dest, int stream_id) {
                              ACL_FORMAT_NHWC);
 
   ino64_t N = mv.size();
+  constexpr int index2 = 2;
+  constexpr int index3 = 3;
+  constexpr int index4 = 4;
+  constexpr int merge_size3 = 3;
+  constexpr int merge_size4 = 4;
   aclopSetAttrInt(opDesc.opAttr, "N", N);
 
   aclSetTensorDescName(opDesc.inputDesc[0], "concat_dim");
 
   aclSetTensorDescName(opDesc.inputDesc[1], "x0");
-  aclSetTensorDescName(opDesc.inputDesc[2], "x1");
-  if (mv.size() == 3)
-    aclSetTensorDescName(opDesc.inputDesc[3], "x2");
-  else if (mv.size() == 4)
-    aclSetTensorDescName(opDesc.inputDesc[4], "x3");
+  aclSetTensorDescName(opDesc.inputDesc[index2], "x1");
+  if (mv.size() == merge_size3)
+    aclSetTensorDescName(opDesc.inputDesc[index3], "x2");
+  else if (mv.size() == merge_size4)
+    aclSetTensorDescName(opDesc.inputDesc[index4], "x3");
   aclSetTensorDescName(opDesc.outputDesc[0], "y");
 
   void *dev;
@@ -70,7 +76,9 @@ void merge(const vector<aclMat> &mv, aclMat &dest, int stream_id) {
     inputBuffers_.emplace_back(
         aclCreateDataBuffer(mv[i].data, mv[i].totalSize));
 
+  constexpr int false_type_flag = -1;
   int type = merge_type(mv[0].depth(), channels);
+  CV_Assert(type != false_type_flag);
   aclMat temp(mv[0].rows, mv[0].cols, type, mv[0].acl_context);
   dest = temp;
   outputBuffers_.emplace_back(aclCreateDataBuffer(dest.data, dest.totalSize));
@@ -115,14 +123,18 @@ void transpose(const aclMat &src, aclMat &dest, int stream_id) {
 
   void *dev;
   void *perm;
+  constexpr int dim0_t = 0;
+  constexpr int dim1_t = 1;
+  constexpr int dim2_t = 2;
+  constexpr int dim3_t = 3;
 
   size_t size = aclGetTensorDescSize(opDesc.inputDesc[1]);
   aclrtMalloc(&dev, size, ACL_MEM_MALLOC_NORMAL_ONLY);
   aclrtMallocHost(&perm, aclGetTensorDescSize(opDesc.inputDesc.data()[1]));
-  ((int *)perm)[0] = 0;
-  ((int *)perm)[1] = 2;
-  ((int *)perm)[2] = 1;
-  ((int *)perm)[3] = 3;
+  ((int *)perm)[0] = dim0_t;
+  ((int *)perm)[1] = dim2_t;
+  ((int *)perm)[2] = dim1_t;
+  ((int *)perm)[3] = dim3_t;
   aclrtMemcpy(dev, size, perm, size, ACL_MEMCPY_HOST_TO_DEVICE);
   inputBuffers_.emplace_back(aclCreateDataBuffer(dev, size));
 
@@ -173,8 +185,9 @@ static int split_type(int depth) {
       return CV_32SC1;
     case CV_64F:
       return CV_64FC1;
+    default:
+      return -1;
   }
-  return -1;
 }
 
 void split(const aclMat &src, vector<aclMat> &mv, int stream_id) {
@@ -203,7 +216,9 @@ void split(const aclMat &src, vector<aclMat> &mv, int stream_id) {
 
   inputBuffers_.emplace_back(aclCreateDataBuffer(src.data, src.totalSize));
 
+  constexpr int false_type_flag = -1;
   int type = split_type(src.depth());
+  CV_Assert(type != false_type_flag);
   for (int i = 0; i < num_split; ++i) {
     aclMat tmp(src.rows, src.cols, type, src.acl_context);
     mv[i] = tmp;
@@ -218,7 +233,6 @@ void split(const aclMat &src, vector<aclMat> &mv, int stream_id) {
   for (int i = 0; i < num_split; ++i)
     AclSafeCall(aclDestroyDataBuffer(outputBuffers_[i]));
 }
-
 
 static void flip_(const aclMat &src, aclMat &dest, int axis, int stream_id) {
   vector<aclDataBuffer *> inputBuffers_;
@@ -259,18 +273,19 @@ static void flip_(const aclMat &src, aclMat &dest, int axis, int stream_id) {
 }
 
 void flip(const aclMat &src, aclMat &dest, int filpCode, int stream_id) {
+  constexpr int axis1 = 1;
+  constexpr int axis2 = 2;
   if (filpCode == 0) {
-    flip_(src, dest, 1, stream_id);
+    flip_(src, dest, axis1, stream_id);
   } else if (filpCode > 0) {
-    flip_(src, dest, 2, stream_id);
+    flip_(src, dest, axis2, stream_id);
   } else {
-    flip_(src, dest, 2, stream_id);
+    flip_(src, dest, axis2, stream_id);
     aclMat tmp(dest.rows, dest.cols, dest.type(), dest.acl_context);
     aclrtMemcpy(tmp.data, dest.totalSize, dest.data, dest.totalSize,
                 ACL_MEMCPY_DEVICE_TO_DEVICE);
-    flip_(tmp, dest, 1, stream_id);
+    flip_(tmp, dest, axis1, stream_id);
   }
 }
 } /* end of namespace acl */
-
 } /* end of namespace cv */

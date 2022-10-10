@@ -114,7 +114,5 @@ void release_device(aclCxt *context) {
   }
   clog << "release_device() is success" << endl;
 }
-
 } /* end of namespace acl */
-
 } /* end of namespace cv */

@@ -87,9 +87,9 @@ enum {
 };
 enum { MAGIC_MASK = 0xFFFF0000, TYPE_MASK = 0x00000FFF, DEPTH_MASK = 7 };
 
-typedef aclrtStream aclStream;
+using aclStream = aclrtStream;
 
-typedef enum Opdims { TWO_DIMS = 1, FOUR_DIMS } Opdims;
+using Opdims = enum Opdims { TWO_DIMS = 1, FOUR_DIMS };
 
 enum DeviceType {
   ACL_DEVICE_TYPE_DEFAULT = (1 << 0),
@@ -99,14 +99,14 @@ enum DeviceType {
 
 enum AttrType { OP_BOOL = 1, OP_INT, OP_FLOAT, OP_STRING };
 
-typedef enum MemMallocPolicy {
+using MemMallocPolicy = enum MemMallocPolicy {
   MALLOC_HUGE_FIRST = 1,
   MALLOC_HUGE_ONLY,
   MALLOC_NORMAL_ONLY,
   MALLOC_HUGE_FIRST_P2P,
   MALLOC_HUGE_ONLY_P2P,
   MALLOC_NORMAL_ONLY_P2P
-} MemMallocPolicy;
+};
 
 CV_EXPORTS aclDataType type_transition(int depth);
 CV_EXPORTS aclrtMemMallocPolicy type_transition(MemMallocPolicy type);
@@ -152,9 +152,7 @@ inline aclrtMemMallocPolicy type_transition(MemMallocPolicy type) {
       return ACL_MEM_MALLOC_HUGE_FIRST;
   }
 }
-
 } /* end of namespace acl */
-
 } /* end of namespace cv */
 
 #endif /* __OPENCV_ACL_HPP__ */

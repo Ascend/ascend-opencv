@@ -13,24 +13,27 @@ void PERF_TEST::Test_Merge(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
+  constexpr int start_val = 8;
+  constexpr int rand_data_range = 32;
+  constexpr int s_val = 1;
+  constexpr int min_format_flag = 128;
 
   vector<int> srcType{CV_8UC1, CV_32FC1, CV_32SC1};
 
-  // vector<int> destType{CV_32FC3};
   vector<int> destType{CV_8UC3, CV_32FC3, CV_32SC3};
   for (size_t i = 0; i < srcType.size(); ++i) {
     test.PrintLog("Perf test : Function: merge()", srcType[i]);
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
-      Mat mat_src1(val, val, srcType[i], Scalar(1));
-      Mat mat_src2(val, val, srcType[i], Scalar(2));
-      Mat mat_src3(val, val, srcType[i], Scalar(3));
+      Mat mat_src1(val, val, srcType[i], Scalar(s_val));
+      Mat mat_src2(val, val, srcType[i], Scalar(s_val+1));
+      Mat mat_src3(val, val, srcType[i], Scalar(s_val+2));
       Mat mat_dest(val, val, destType[i]);
       Mat mat_dest1(val, val, destType[i]);
 
-      test.SetDataRange(mat_src1, 32);
-      test.SetDataRange(mat_src2, 32);
-      test.SetDataRange(mat_src3, 32);
+      test.SetDataRange(mat_src1, rand_data_range);
+      test.SetDataRange(mat_src2, rand_data_range);
+      test.SetDataRange(mat_src3, rand_data_range);
 
       aclMat aclmat_src1(val, val, srcType[i], mat_src1.data, acl_context);
       aclMat aclmat_src2(val, val, srcType[i], mat_src2.data, acl_context);
@@ -63,7 +66,7 @@ void PERF_TEST::Test_Merge(aclCxt *acl_context) {
       aclmat_dest.download(mat_dest1);
       bool ret = test.Test_Diff(mat_dest, mat_dest1);
       ASSERT_TRUE(ret);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";
@@ -79,18 +82,20 @@ void PERF_TEST::Test_Transpose(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
+  constexpr int start_val = 8;
+  constexpr int rand_data_range = 32;
+  constexpr int min_format_flag = 128;
 
-  // vector<int> type{CV_32FC1};
   vector<int> type{CV_32FC1, CV_32SC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Perf test : Function: transpose()", type[i]);
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
       Mat mat_src(val, val, type[i]);
       Mat mat_dest(val, val, type[i]);
       Mat mat_dest1(val, val, type[i]);
 
-      test.SetDataRange(mat_src, 32);
+      test.SetDataRange(mat_src, rand_data_range);
 
       aclMat aclmat_src(val, val, type[i], mat_src.data, acl_context);
       aclMat aclmat_dest(val, val, type[i], mat_dest.data, acl_context);
@@ -112,7 +117,7 @@ void PERF_TEST::Test_Transpose(aclCxt *acl_context) {
       aclmat_dest.download(mat_dest1);
       bool ret = test.Test_Diff(mat_dest, mat_dest1);
       ASSERT_TRUE(ret);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";
@@ -128,20 +133,22 @@ void PERF_TEST::Test_Split(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
+  constexpr int start_val = 8;
+  constexpr int rand_data_range = 32;
+  constexpr int min_format_flag = 128;
 
-  // vector<int> srcType{CV_32FC3};
   vector<int> srcType{CV_8UC3, CV_32FC3, CV_32SC3};
   vector<int> destType{CV_8UC1, CV_32FC1, CV_32SC1};
   for (size_t i = 0; i < srcType.size(); ++i) {
     test.PrintLog("Perf test : Function: split()", srcType[i]);
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
       Mat mat_src(val, val, srcType[i]);
       Mat mat_dest1(val, val, destType[i]);
       Mat mat_dest2(val, val, destType[i]);
       Mat mat_dest3(val, val, destType[i]);
 
-      test.SetDataRange(mat_src, 32);
+      test.SetDataRange(mat_src, rand_data_range);
 
       aclMat aclmat_src(val, val, srcType[i], mat_src.data, acl_context);
       aclMat aclmat_dest1;
@@ -180,7 +187,7 @@ void PERF_TEST::Test_Split(aclCxt *acl_context) {
       ret &= test.Test_Diff((dest.data())[1], mat_dest2);
       ret &= test.Test_Diff((dest.data())[2], mat_dest3);
       ASSERT_TRUE(ret);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";
@@ -196,17 +203,20 @@ void PERF_TEST::Test_Flip(aclCxt *acl_context) {
   int cycle_index = 100;
   double begin, end, time, acltime;
   Common_Test test;
+  constexpr int start_val = 8;
+  constexpr int rand_data_range = 32;
+  constexpr int min_format_flag = 128;
 
   vector<int> type{CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Perf test : Function: flip()", type[i]);
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
       Mat mat_src(val, val, type[i]);
       Mat mat_dest(val, val, type[i]);
       Mat mat_dest1(val, val, type[i]);
 
-      test.SetDataRange(mat_src, 32);
+      test.SetDataRange(mat_src, rand_data_range);
 
       aclMat aclmat_src(val, val, type[i], mat_src.data, acl_context);
       aclMat aclmat_dest(val, val, type[i], mat_dest.data, acl_context);
@@ -228,7 +238,7 @@ void PERF_TEST::Test_Flip(aclCxt *acl_context) {
       aclmat_dest.download(mat_dest1);
       bool ret = test.Test_Diff(mat_dest, mat_dest1);
       ASSERT_TRUE(ret);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";

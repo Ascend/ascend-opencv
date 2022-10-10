@@ -218,7 +218,5 @@ void sqrt(const aclMat &src, aclMat &dest, int stream_id) {
 
   OneInAndOneOut(src, dest, "Sqrt", stream_id);
 }
-
 } /* end of namespace acl */
-
 } /* end of namespace cv */

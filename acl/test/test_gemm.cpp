@@ -14,17 +14,20 @@ void PERF_TEST::Test_MatMul(aclCxt *acl_context) {
   double begin, end, time, acltime;
   Common_Test test;
   vector<int> type{CV_32FC1};
+  constexpr int start_val = 8;
+  constexpr int rand_data_range = 32;
+  constexpr int min_format_flag = 128;
 
   for (size_t i = 0; i < type.size(); ++i) {
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       Mat mat_src(val, val, type[i]);
       Mat mat_src1(val, val, type[i]);
       Mat mat_dest(val, val, type[i]);
       Mat mat_dest1(val, val, type[i]);
 
-      test.SetDataRange(mat_src, 32);
-      test.SetDataRange(mat_src1, 32);
-      test.SetDataRange(mat_dest, 32);
+      test.SetDataRange(mat_src, rand_data_range);
+      test.SetDataRange(mat_src1, rand_data_range);
+      test.SetDataRange(mat_dest, rand_data_range);
 
       aclMat aclmat_src(val, val, type[i], mat_src.data, acl_context);
       aclMat aclmat_src1(val, val, type[i], mat_src1.data, acl_context);
@@ -48,7 +51,7 @@ void PERF_TEST::Test_MatMul(aclCxt *acl_context) {
       aclmat_dest.download(mat_dest1);
       bool ret = test.Test_Diff(mat_dest, mat_dest1);
       ASSERT_TRUE(ret);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";
@@ -65,9 +68,11 @@ void PERF_TEST::Test_Convolution(aclCxt *acl_context) {
   double begin, end, time, acltime;
   Common_Test test;
   vector<int> type{CV_32FC1};
+  constexpr int start_val = 8;
+  constexpr int min_format_flag = 128;
 
   for (size_t i = 0; i < type.size(); ++i) {
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       Mat mat_src(val, val, type[i], Scalar{1, 2});
       Mat mat_kernel(3, 3, type[i], Scalar(1, 4));
       Mat mat_dest(val, val, type[i], Scalar{6});
@@ -96,11 +101,8 @@ void PERF_TEST::Test_Convolution(aclCxt *acl_context) {
       acltime = (end - begin) / getTickFrequency() / (cycle_index - 1);
 
       aclmat_dest.download(mat_dest1);
-      /*
-      bool ret = test.Test_Diff(mat_dest, mat_dest1);
-      ASSERT_TRUE(ret);
-      */
-      if (val < 128)
+      
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";

@@ -13,12 +13,13 @@ void PERF_TEST::Test_Abs(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
+  constexpr int start_val = 8;
+  constexpr int min_format_flag = 128;
 
-  // vector<int> type{CV_32FC1};
   vector<int> type{CV_32FC1, CV_32SC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Perf test : Function: Abs()", type[i]);
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
       Mat mat_src(val, val, type[i], Scalar{-2});
       Mat mat_dest(val, val, type[i], Scalar{-4});
@@ -44,7 +45,7 @@ void PERF_TEST::Test_Abs(aclCxt *acl_context) {
       aclmat_dest.download(mat_dest1);
       bool ret = test.Test_Diff(mat_dest, mat_dest1);
       ASSERT_TRUE(ret);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";
@@ -60,12 +61,13 @@ void PERF_TEST::Test_Pow(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
+  constexpr int start_val = 8;
+  constexpr int min_format_flag = 128;
 
-  // vector<int> type{CV_32FC1};
   vector<int> type{CV_8UC1, CV_32FC1, CV_32SC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Perf test : Function: Pow()", type[i]);
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
       int power = test.RandDom_(6);
       Mat mat_src(val, val, type[i]);
@@ -92,7 +94,7 @@ void PERF_TEST::Test_Pow(aclCxt *acl_context) {
       acltime = (end - begin) / getTickFrequency() / (cycle_index - 1);
 
       aclmat_dest.download(mat_dest1);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";
@@ -108,10 +110,12 @@ void PERF_TEST::Test_Sqrt(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
-  // vector<int> type{CV_32FC1};
+  constexpr int start_val = 8;
+  constexpr int min_format_flag = 128;
+
   vector<int> type{CV_32FC1, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
       Mat mat_src(val, val, type[i]);
       Mat mat_dest(val, val, type[i]);
@@ -138,7 +142,7 @@ void PERF_TEST::Test_Sqrt(aclCxt *acl_context) {
       acltime = (end - begin) / getTickFrequency() / (cycle_index - 1);
 
       aclmat_dest.download(mat_dest1);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";
@@ -154,10 +158,12 @@ void PERF_TEST::Test_Add(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
-  // vector<int> type{CV_32FC1};
+  constexpr int start_val = 8;
+  constexpr int min_format_flag = 128;
+
   vector<int> type{CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
       Mat mat_src1(val, val, type[i]);
       Mat mat_src2(val, val, type[i]);
@@ -189,7 +195,7 @@ void PERF_TEST::Test_Add(aclCxt *acl_context) {
       aclmat_dest.download(mat_dest1);
       bool ret = test.Test_Diff(mat_dest, mat_dest1);
       ASSERT_TRUE(ret);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";
@@ -205,10 +211,12 @@ void PERF_TEST::Test_Divide(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
-  // vector<int> type{CV_32FC1};
+  constexpr int start_val = 8;
+  constexpr int min_format_flag = 128;
+
   vector<int> type{CV_8UC1, CV_32FC1, CV_32SC1};
   for (size_t i = 0; i < type.size(); ++i) {
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
       Mat mat_src1(val, val, type[i]);
       Mat mat_src2(val, val, type[i]);
@@ -238,9 +246,7 @@ void PERF_TEST::Test_Divide(aclCxt *acl_context) {
       acltime = (end - begin) / getTickFrequency() / (cycle_index - 1);
 
       aclmat_dest.download(mat_dest1);
-      // bool ret = test.Test_Diff(mat_dest, mat_dest1);
-      // ASSERT_TRUE(ret);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";
@@ -256,11 +262,12 @@ void PERF_TEST::Test_Exp(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
+  constexpr int start_val = 8;
+  constexpr int min_format_flag = 128;
 
-  // vector<int> type{CV_32FC1};
   vector<int> type{CV_32FC1, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
       Mat mat_src(val, val, type[i]);
       Mat mat_dest(val, val, type[i]);
@@ -287,7 +294,7 @@ void PERF_TEST::Test_Exp(aclCxt *acl_context) {
       acltime = (end - begin) / getTickFrequency() / (cycle_index - 1);
 
       aclmat_dest.download(mat_dest1);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";
@@ -303,10 +310,12 @@ void PERF_TEST::Test_Log(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
-  // vector<int> type{CV_32FC1};
+  constexpr int start_val = 8;
+  constexpr int min_format_flag = 128;
+
   vector<int> type{CV_32FC1, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
       Mat mat_src(val, val, type[i]);
       Mat mat_dest(val, val, type[i]);
@@ -333,7 +342,7 @@ void PERF_TEST::Test_Log(aclCxt *acl_context) {
       acltime = (end - begin) / getTickFrequency() / (cycle_index - 1);
 
       aclmat_dest.download(mat_dest1);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";
@@ -349,10 +358,12 @@ void PERF_TEST::Test_Max(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
-  // vector<int> type{CV_32FC2};
+  constexpr int start_val = 8;
+  constexpr int min_format_flag = 128;
+
   vector<int> type{CV_32FC2, CV_32SC2, CV_64FC2};
   for (size_t i = 0; i < type.size(); ++i) {
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
       Mat mat_src1(val, val, type[i]);
       Mat mat_src2(val, val, type[i]);
@@ -384,7 +395,7 @@ void PERF_TEST::Test_Max(aclCxt *acl_context) {
       aclmat_dest.download(mat_dest1);
       bool ret = test.Test_Diff(mat_dest, mat_dest1);
       ASSERT_TRUE(ret);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";
@@ -400,10 +411,12 @@ void PERF_TEST::Test_Min(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
-  // vector<int> type{CV_32FC3};
+  constexpr int start_val = 8;
+  constexpr int min_format_flag = 128;
+
   vector<int> type{CV_32FC3, CV_32SC3, CV_64FC3};
   for (size_t i = 0; i < type.size(); ++i) {
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
       Mat mat_src1(val, val, type[i]);
       Mat mat_src2(val, val, type[i]);
@@ -435,7 +448,7 @@ void PERF_TEST::Test_Min(aclCxt *acl_context) {
       aclmat_dest.download(mat_dest1);
       bool ret = test.Test_Diff(mat_dest, mat_dest1);
       ASSERT_TRUE(ret);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";

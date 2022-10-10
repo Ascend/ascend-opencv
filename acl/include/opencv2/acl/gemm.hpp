@@ -11,12 +11,10 @@ CV_EXPORTS void MatMul(const aclMat &src1, const aclMat &src2, aclMat &dest,
 // convolution
 CV_EXPORTS void Convolution(
     const aclMat &src, const aclMat &kernel, aclMat &dest,
-    const std::vector<int64_t> &stridesList = std::vector<int64_t>{1, 1, 1, 1},
-    const std::vector<int64_t> &padsList = std::vector<int64_t>{0, 0, 0, 0},
+    const std::vector<int64_t> &stridesList = std::vector<int64_t> {1, 1, 1, 1},
+    const std::vector<int64_t> &padsList = std::vector<int64_t> {0, 0, 0, 0},
     int stream_id = 0);
-
 } /* end of namespace acl */
-
 } /* end of namespace cv */
 
 #endif

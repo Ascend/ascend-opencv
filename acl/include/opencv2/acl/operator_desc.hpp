@@ -91,9 +91,7 @@ CV_EXPORTS void TwoInAndOneOut(const aclMat &inputMat,
 // run the operator
 CV_EXPORTS void Runop(std::vector<aclMat> &input, std::vector<aclMat> &output,
                       OperatorDesc &opDesc, int stream_id);
-
 } /* end of namespace acl */
-
 } /* end of namespace cv */
 
 #endif  // OPERATOR_DESC_HPP

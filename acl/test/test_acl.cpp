@@ -13,18 +13,21 @@ void PERF_TEST::Test_operator_add_perf(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
+  constexpr int start_val = 8;
+  constexpr int rand_data_range = 1;
+  constexpr int min_format_flag = 128;
 
   vector<int> type{CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Perf test : Function: operator+=()", type[i]);
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
       Mat mat_src(val, val, type[i]);
       Mat mat_dest(val, val, type[i]);
       Mat mat_dest1(val, val, type[i]);
 
-      test.SetDataRange(mat_src, 1);
-      test.SetDataRange(mat_dest, 1);
+      test.SetDataRange(mat_src, rand_data_range);
+      test.SetDataRange(mat_dest, rand_data_range);
 
       aclMat aclmat_src(val, val, type[i], mat_src.data, acl_context);
       aclMat aclmat_dest(val, val, type[i], mat_dest.data, acl_context);
@@ -46,7 +49,7 @@ void PERF_TEST::Test_operator_add_perf(aclCxt *acl_context) {
       aclmat_dest.download(mat_dest1);
       bool ret = test.Test_Diff(mat_dest, mat_dest1);
       ASSERT_TRUE(ret);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";
@@ -62,19 +65,22 @@ void PERF_TEST::Test_operator_sub_perf(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
+  constexpr int start_val = 8;
+  constexpr int rand_data_range1 = 4;
+  constexpr int rand_data_range2 = 32;
+  constexpr int min_format_flag = 128;
 
   vector<int> type{CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
-  // vector<int> type{CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Perf test : Function: operator-=()", type[i]);
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
       Mat mat_src(val, val, type[i]);
       Mat mat_dest(val, val, type[i]);
       Mat mat_dest1(val, val, type[i]);
 
-      test.SetDataRange(mat_src, 4);
-      test.SetDataRange(mat_dest, 32);
+      test.SetDataRange(mat_src, rand_data_range1);
+      test.SetDataRange(mat_dest, rand_data_range2);
 
       aclMat aclmat_src(val, val, type[i], mat_src.data, acl_context);
       aclMat aclmat_dest(val, val, type[i], mat_dest.data, acl_context);
@@ -94,9 +100,7 @@ void PERF_TEST::Test_operator_sub_perf(aclCxt *acl_context) {
       acltime = (end - begin) / getTickFrequency() / (cycle_index - 1);
 
       aclmat_dest.download(mat_dest1);
-      // bool ret = test.Test_Diff(mat_dest, mat_dest1);
-      // ASSERT_TRUE(ret);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";
@@ -112,15 +116,20 @@ void PERF_TEST::Test_operator_div_perf(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
+  constexpr int start_val = 8;
+  constexpr int s_val1 = 1;
+  constexpr int s_val2 = 2;
+  constexpr int s_val4 = 4;
+  constexpr int s_val8 = 8;
+  constexpr int min_format_flag = 128;
 
-  // vector<int> type{CV_32FC1};
   vector<int> type{CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Perf test : Function: operator/=()", type[i]);
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
-      Mat mat_src(val, val, type[i], Scalar(1, 2, 4));
-      Mat mat_dest(val, val, type[i], Scalar(2, 4, 8));
+      Mat mat_src(val, val, type[i], Scalar(s_val1, s_val2, s_val4));
+      Mat mat_dest(val, val, type[i], Scalar(s_val2, s_val4, s_val8));
       Mat mat_dest1(val, val, type[i]);
 
       aclMat aclmat_src(val, val, type[i], mat_src.data, acl_context);
@@ -141,9 +150,7 @@ void PERF_TEST::Test_operator_div_perf(aclCxt *acl_context) {
       acltime = (end - begin) / getTickFrequency() / (cycle_index - 1);
 
       aclmat_dest.download(mat_dest1);
-      // bool ret = test.Test_Diff(mat_dest, mat_dest1);
-      // ASSERT_TRUE(ret);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";
@@ -159,17 +166,20 @@ void PERF_TEST::Test_operator_mul_perf(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
-  vector<int> type{CV_32FC1};
+  constexpr int start_val = 8;
+  constexpr int rand_data_range = 1;
+  constexpr int min_format_flag = 128;
 
+  vector<int> type{CV_32FC1};
   for (size_t i = 0; i < type.size(); ++i) {
-    for (val = 8; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= 2) {
       n = cycle_index;
       Mat mat_src(val, val, type[i]);
       Mat mat_dest(val, val, type[i]);
       Mat mat_dest1(val, val, type[i]);
 
-      test.SetDataRange(mat_src, 1);
-      test.SetDataRange(mat_dest, 1);
+      test.SetDataRange(mat_src, rand_data_range);
+      test.SetDataRange(mat_dest, rand_data_range);
 
       aclMat aclmat_src(val, val, type[i], mat_src.data, acl_context);
       aclMat aclmat_dest(val, val, type[i], mat_dest.data, acl_context);
@@ -191,7 +201,7 @@ void PERF_TEST::Test_operator_mul_perf(aclCxt *acl_context) {
       aclmat_dest.download(mat_dest1);
       bool ret = test.Test_Diff(mat_dest, mat_dest1);
       ASSERT_TRUE(ret);
-      if (val < 128)
+      if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
       else
         cout << "Shape: " << val << " x " << val << "\t";

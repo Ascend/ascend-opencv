@@ -91,9 +91,7 @@ inline aclCxt::~aclCxt() {
 
   std::clog << "aclrtDestroyContext() is success" << std::endl;
 }
-
 } /* end of namespace acl */
-
 } /* end of namespace cv */
 
 #endif

@@ -93,11 +93,8 @@ void aclMat::create(Size size, int type, ALIGNMENT config,
 
 inline size_t alignSize(size_t sz, int n) { return (((sz) + n - 1) / n) * n; }
 
-/* core logic */
 void aclMat::createEx(int _rows, int _cols, int _type, ALIGNMENT config,
                       MemMallocPolicy policy) {
-  /* TO ENSURE */
-  //_type &= CV_MAT_TYPE_MASK;
   _type &= TYPE_MASK;
   if (rows == _rows && cols == _cols && type() == _type && data) return;
 
@@ -106,8 +103,6 @@ void aclMat::createEx(int _rows, int _cols, int _type, ALIGNMENT config,
   CV_DbgAssert(_rows >= 0 && _cols >= 0);
 
   if (_rows > 0 && _cols > 0) {
-    /* TO ENSURE */
-    // flags = (_type & CV_MAT_TYPE_MASK) | MAGIC_VAL;
     flags = Mat::MAGIC_VAL + _type;
     rows = _rows;
     cols = _cols;
@@ -115,8 +110,9 @@ void aclMat::createEx(int _rows, int _cols, int _type, ALIGNMENT config,
     wholecols = _cols;
     size_t esz = elemSize();
     void *dev_ptr;
+    constexpr int channels_3 = 3;
     if (config == ALIGNMENT::MEMORY_ALIGN) {
-      if (channels() == 3)
+      if (channels() == channels_3)
         step = alignSize(cols * esz, ALIGN * channels());
       else
         step = alignSize(cols * esz);
@@ -207,7 +203,5 @@ aclMat &aclMat::operator*=(const aclMat &m) {
 
   return *this;
 }
-
 } /* end of namespace acl */
-
 } /* end of namespace cv */

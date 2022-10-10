@@ -66,6 +66,8 @@ bool Common_Test::Test_Diff(const aclMat &aclmat, const aclMat &aclmat_other) {
 
 bool Common_Test::Test_Diff(const Mat &mat, const Mat &mat_other) {
   bool is_correct;
+  constexpr int lhs = -0.00001;
+  constexpr int rhs = 0.00001;
 
   is_correct = (mat.rows == mat_other.rows);
   is_correct &= (mat.cols == mat_other.cols);
@@ -109,10 +111,10 @@ bool Common_Test::Test_Diff(const Mat &mat, const Mat &mat_other) {
         for (int j = 0; j < mat.channels(); ++j)
           is_correct &= ((((float *)(mat.data))[i + j] -
                               (((float *)mat_other.data))[i + j] >=
-                          -0.00001) ||
+                          lhs) ||
                          (((float *)(mat.data))[i + j] -
                               (((float *)mat_other.data))[i + j] <=
-                          0.00001));
+                          rhs));
       }
       return is_correct;
     case CV_64F:
@@ -122,10 +124,10 @@ bool Common_Test::Test_Diff(const Mat &mat, const Mat &mat_other) {
         for (int j = 0; j < mat.channels(); ++j)
           is_correct &= ((((double *)(mat.data))[i + j] -
                               (((double *)mat_other.data))[i + j] >=
-                          -0.00001) ||
+                          lhs) ||
                          (((double *)(mat.data))[i + j] -
                               (((double *)mat_other.data))[i + j] <=
-                          0.00001));
+                          rhs));
       }
       return is_correct;
   }

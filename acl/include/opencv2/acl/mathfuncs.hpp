@@ -24,7 +24,6 @@ CV_EXPORTS void max(const aclMat &src, const aclMat &other_src, aclMat &dest,
 CV_EXPORTS void min(const aclMat &src, const aclMat &other_src, aclMat &dest,
                     int stream_id = 0);
 } /* end of namespace acl */
-
 } /* end of namespace cv */
 
 #endif

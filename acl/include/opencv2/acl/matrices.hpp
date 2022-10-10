@@ -14,7 +14,6 @@ CV_EXPORTS void transpose(const aclMat &src, aclMat &dest, int stream_id = 0);
 CV_EXPORTS void flip(const aclMat &src, aclMat &dest, int flipCode = 0,
                      int stream_id = 0);
 } /* end of namespace acl */
-
 } /* end of namespace cv */
 
 #endif

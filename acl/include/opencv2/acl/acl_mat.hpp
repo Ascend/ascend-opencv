@@ -86,7 +86,6 @@ class CV_EXPORTS aclMat {
   void createEx(Size size, int type, ALIGNMENT config = MEMORY_UNALIGNED,
                 MemMallocPolicy policy = MALLOC_NORMAL_ONLY);
 
-  //! decreases reference counter;
   // deallocate the data when reference counter reaches 0.
   void release();
 
@@ -155,7 +154,7 @@ class CV_EXPORTS aclMat {
   size_t step;
 
   //! pointer to the data(ACL memory object)
-  void *data;  
+  void *data;
 
   //! pointer to the reference counter;
   // when aclMatrix points to user-allocated data, the pointer is NULL
@@ -177,7 +176,6 @@ class CV_EXPORTS aclMat {
   size_t totalSize;
 };
 } /* end of namespace acl */
-
 } /* end of namespace cv */
 
 #endif
