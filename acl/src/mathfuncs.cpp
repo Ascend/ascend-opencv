@@ -74,7 +74,7 @@ void pow(const aclMat &src, double power, aclMat &dest, int stream_id) {
   output_Mat.emplace_back(dest);
 
   OperatorDesc opDesc = CreateOpDesc("Pow", input_Mat, output_Mat);
-  vector<int64_t> shape2{1};
+  vector<int64_t> shape2 {1};
   opDesc.AddInputTensorDesc(dataType, shape2.size(), shape2.data(),
                             ACL_FORMAT_NHWC);
 

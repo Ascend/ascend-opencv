@@ -591,7 +591,7 @@ void AclMat_Test::Test_operator_add(aclCxt *acl_context) {
   const int rowsMax = 1048;
   const int colsMax = 1048;
 
-  vector<int> type{CV_8UC1, CV_8UC3, CV_32FC1, CV_32FC3, CV_32SC1, CV_32SC3};
+  vector<int> type {CV_8UC1, CV_8UC3, CV_32FC1, CV_32FC3, CV_32SC1, CV_32SC3};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Correctness test: Functoin: operator+=()", type[i]);
     for (rows = lval; rows < rowsMax; rows++) {
@@ -631,7 +631,7 @@ void AclMat_Test::Test_operator_sub(aclCxt *acl_context) {
   constexpr int s_val1 = 1, s_val2 = 2, s_val3 = 3;
   constexpr int s_val4 = 4, s_val6 = 6, s_val8 = 8;
 
-  vector<int> type{CV_8UC1,  CV_8UC3,  CV_32FC1, CV_32FC3,
+  vector<int> type {CV_8UC1,  CV_8UC3,  CV_32FC1, CV_32FC3,
                    CV_32SC1, CV_32SC3, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Correctness test: Functoin: operator-=()", type[i]);
@@ -669,7 +669,7 @@ void AclMat_Test::Test_operator_div(aclCxt *acl_context) {
   constexpr int s_val1 = 1, s_val2 = 2;
   constexpr int s_val4 = 4, s_val6 = 6, s_val8 = 8;
 
-  vector<int> type{CV_8UC1,  CV_8UC3,  CV_32FC1, CV_32FC3,
+  vector<int> type {CV_8UC1,  CV_8UC3,  CV_32FC1, CV_32FC3,
                    CV_32SC1, CV_32SC3, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Correctness test: Functoin: operator/=()", type[i]);
@@ -705,7 +705,7 @@ void AclMat_Test::Test_operator_mul(aclCxt *acl_context) {
   const int valMax = 1048;
   constexpr int lval = 1024;
 
-  vector<int> type{CV_32FC1};
+  vector<int> type {CV_32FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Correctness test: Functoin: operator*=()", type[i]);
     for (val = lval; val < valMax; val++) {
