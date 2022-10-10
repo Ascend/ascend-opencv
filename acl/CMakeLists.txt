@@ -1,9 +1,9 @@
-#if(NOT HAVE_ACL)
-#  ocv_module_disable(acl)
-#  return()
-#endif()
+# if(NOT HAVE_ACL)
+# ocv_module_disable(acl)
+# return()
+# endif()
 
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" "-DENABLE_DVPP_INTERFACE")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" "-DENABLE_DVPP_INTERFACE")
 
 set(acl_lib "/usr/local/Ascend/ascend-toolkit/latest/acllib/lib64/stub/")
 set(acl_lib "/usr/local/Ascend/ascend-toolkit/latest/fwkacllib/lib64/stub/")
