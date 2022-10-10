@@ -18,14 +18,14 @@ void PERF_TEST::Test_Abs(aclCxt *acl_context) {
   constexpr int start_val = 8;
   constexpr int min_format_flag = 128;
 
-  vector<int> type{CV_32FC1, CV_32SC1};
+  vector<int> type {CV_32FC1, CV_32SC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Perf test : Function: Abs()", type[i]);
     for (val = start_val; val <= valmax; val *= base) {
       n = cycle_index;
-      Mat mat_src(val, val, type[i], Scalar{s_val_2});
-      Mat mat_dest(val, val, type[i], Scalar{s_val_4});
-      Mat mat_dest1(val, val, type[i], Scalar{s_val_6});
+      Mat mat_src(val, val, type[i], Scalar {s_val_2});
+      Mat mat_dest(val, val, type[i], Scalar {s_val_4});
+      Mat mat_dest1(val, val, type[i], Scalar {s_val_6});
 
       aclMat aclmat_src(val, val, type[i], mat_src.data, acl_context);
       aclMat aclmat_dest(val, val, type[i], mat_dest.data, acl_context);
@@ -68,7 +68,7 @@ void PERF_TEST::Test_Pow(aclCxt *acl_context) {
   constexpr int rand_data_range = 32;
   constexpr int min_format_flag = 128;
 
-  vector<int> type{CV_8UC1, CV_32FC1, CV_32SC1};
+  vector<int> type {CV_8UC1, CV_32FC1, CV_32SC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Perf test : Function: Pow()", type[i]);
     for (val = start_val; val <= valmax; val *= base) {
@@ -119,7 +119,7 @@ void PERF_TEST::Test_Sqrt(aclCxt *acl_context) {
   constexpr int min_format_flag = 128;
   constexpr int rand_data_range = 32;
 
-  vector<int> type{CV_32FC1, CV_64FC1};
+  vector<int> type {CV_32FC1, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     for (val = start_val; val <= valmax; val *= base) {
       n = cycle_index;
@@ -169,7 +169,7 @@ void PERF_TEST::Test_Add(aclCxt *acl_context) {
   constexpr int min_format_flag = 128;
   constexpr int rand_data_range = 32;
 
-  vector<int> type{CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
+  vector<int> type {CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     for (val = start_val; val <= valmax; val *= base) {
       n = cycle_index;
@@ -225,7 +225,7 @@ void PERF_TEST::Test_Divide(aclCxt *acl_context) {
   constexpr int rand_data_range1 = 32;
   constexpr int rand_data_range2 = 4;
 
-  vector<int> type{CV_8UC1, CV_32FC1, CV_32SC1};
+  vector<int> type {CV_8UC1, CV_32FC1, CV_32SC1};
   for (size_t i = 0; i < type.size(); ++i) {
     for (val = start_val; val <= valmax; val *= base) {
       n = cycle_index;
@@ -279,7 +279,7 @@ void PERF_TEST::Test_Exp(aclCxt *acl_context) {
   constexpr int rand_data_range1 = 32;
   constexpr int rand_data_range2 = 2;
 
-  vector<int> type{CV_32FC1, CV_64FC1};
+  vector<int> type {CV_32FC1, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     for (val = start_val; val <= valmax; val *= base) {
       n = cycle_index;
@@ -329,7 +329,7 @@ void PERF_TEST::Test_Log(aclCxt *acl_context) {
   constexpr int min_format_flag = 128;
   constexpr int rand_data_range = 32;
 
-  vector<int> type{CV_32FC1, CV_64FC1};
+  vector<int> type {CV_32FC1, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     for (val = start_val; val <= valmax; val *= base) {
       n = cycle_index;
@@ -379,7 +379,7 @@ void PERF_TEST::Test_Max(aclCxt *acl_context) {
   constexpr int min_format_flag = 128;
   constexpr int rand_data_range = 32;
 
-  vector<int> type{CV_32FC2, CV_32SC2, CV_64FC2};
+  vector<int> type {CV_32FC2, CV_32SC2, CV_64FC2};
   for (size_t i = 0; i < type.size(); ++i) {
     for (val = start_val; val <= valmax; val *= base) {
       n = cycle_index;
@@ -434,7 +434,7 @@ void PERF_TEST::Test_Min(aclCxt *acl_context) {
   constexpr int min_format_flag = 128;
   constexpr int rand_data_range = 32;
 
-  vector<int> type{CV_32FC3, CV_32SC3, CV_64FC3};
+  vector<int> type {CV_32FC3, CV_32SC3, CV_64FC3};
   for (size_t i = 0; i < type.size(); ++i) {
     for (val = start_val; val <= valmax; val *= base) {
       n = cycle_index;

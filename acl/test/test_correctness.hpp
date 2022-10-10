@@ -27,7 +27,7 @@ class CV_EXPORTS AclMat_Test {
   /* test aclMat (const Mat &m, cv::acl::aclCxt* acl_context, aclrtMemMallocPolicy policy
    * = ACL_MEM_MALLOC_HUGE_FIRST) */
   CV_EXPORTS void Test_constructor_MAT(cv::acl::aclCxt *acl_context);
-  /* test upload download*/
+  /* test upload download */
   CV_EXPORTS void Test_DATA_TRANSFER(cv::acl::aclCxt *acl_context);
   /* test upload_2d download_2d */
   CV_EXPORTS void Test_DATA_TRANSFERASYNC(cv::acl::aclCxt *acl_context);

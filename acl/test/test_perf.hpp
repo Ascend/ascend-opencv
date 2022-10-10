@@ -4,7 +4,7 @@
 #include "test_precomp.hpp"
 
 class PERF_TEST {
- public:
+public:
   CV_EXPORTS void Test_operator_add_perf(cv::acl::aclCxt *acl_context);
   CV_EXPORTS void Test_operator_sub_perf(cv::acl::aclCxt *acl_context);
   CV_EXPORTS void Test_operator_div_perf(cv::acl::aclCxt *acl_context);

@@ -18,7 +18,7 @@ void PERF_TEST::Test_operator_add_perf(aclCxt *acl_context) {
   constexpr int rand_data_range = 1;
   constexpr int min_format_flag = 128;
 
-  vector<int> type{CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
+  vector<int> type {CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Perf test : Function: operator+=()", type[i]);
     for (val = start_val; val <= valmax; val *= base) {
@@ -72,7 +72,7 @@ void PERF_TEST::Test_operator_sub_perf(aclCxt *acl_context) {
   constexpr int rand_data_range2 = 32;
   constexpr int min_format_flag = 128;
 
-  vector<int> type{CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
+  vector<int> type {CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Perf test : Function: operator-=()", type[i]);
     for (val = start_val; val <= valmax; val *= base) {
@@ -124,7 +124,7 @@ void PERF_TEST::Test_operator_div_perf(aclCxt *acl_context) {
   constexpr int s_val4 = 4, s_val8 = 8;
   constexpr int min_format_flag = 128;
 
-  vector<int> type{CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
+  vector<int> type {CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Perf test : Function: operator/=()", type[i]);
     for (val = start_val; val <= valmax; val *= base) {
@@ -172,7 +172,7 @@ void PERF_TEST::Test_operator_mul_perf(aclCxt *acl_context) {
   constexpr int rand_data_range = 1;
   constexpr int min_format_flag = 128;
 
-  vector<int> type{CV_32FC1};
+  vector<int> type {CV_32FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     for (val = start_val; val <= valmax; val *= base) {
       n = cycle_index;

@@ -174,7 +174,7 @@ aclMat &aclMat::operator*=(const aclMat &m) {
   vector<aclMat> output_Mat;
   vector<aclDataBuffer *> inputBuffers_;
   vector<aclDataBuffer *> outputBuffers_;
-  aclMat newMat{this->rows, m.cols, this->type(), this->acl_context};
+  aclMat newMat {this->rows, m.cols, this->type(), this->acl_context};
 
   input_Mat.emplace_back(*this);
   input_Mat.emplace_back(m);

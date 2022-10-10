@@ -53,7 +53,7 @@ void Convolution(const aclMat& src, const aclMat& kernel, aclMat& dest,
                  const vector<int64_t>& padsList, int stream_id) {
   vector<aclDataBuffer*> inputBuffers_;
   vector<aclDataBuffer*> outputBuffers_;
-  vector<int64_t> dilationsList{1, 1, 1, 1};
+  vector<int64_t> dilationsList {1, 1, 1, 1};
   string opType = "Conv2D";
   int dest_rows =
       (src.rows + padsList[0] + padsList[1] - (1 * (kernel.rows - 1) + 1)) /
@@ -65,9 +65,9 @@ void Convolution(const aclMat& src, const aclMat& kernel, aclMat& dest,
       1;
   aclMat acl_dest {dest_rows, dest_cols, src.type(), src.acl_context};
 
-  vector<int64_t> shape{1, 1, src.rows, src.cols};
-  vector<int64_t> shape1{1, 1, kernel.rows, kernel.cols};
-  vector<int64_t> shape2{1, 1, acl_dest.rows, acl_dest.cols};
+  vector<int64_t> shape {1, 1, src.rows, src.cols};
+  vector<int64_t> shape1 {1, 1, kernel.rows, kernel.cols};
+  vector<int64_t> shape2 {1, 1, acl_dest.rows, acl_dest.cols};
 
   aclDataType dataType = type_transition(src.depth());
   aclFormat format = ACL_FORMAT_NCHW;

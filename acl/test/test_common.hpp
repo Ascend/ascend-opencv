@@ -3,10 +3,10 @@
 
 #include "test_precomp.hpp"
 
-typedef enum TestDatatype { INT = 1, FLOAT } TestDatatype;
+using TestDatatype = enum TestDatatype { INT = 1, FLOAT };
 
 class CV_EXPORTS Common_Test {
- public:
+public:
   Common_Test();
   ~Common_Test();
   CV_EXPORTS bool Test_Diff(

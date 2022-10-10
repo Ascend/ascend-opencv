@@ -19,9 +19,9 @@ void PERF_TEST::Test_Merge(aclCxt *acl_context) {
   constexpr int s_val1 = 1, s_val2 = 2, s_val3 = 3;
   constexpr int min_format_flag = 128;
 
-  vector<int> srcType{CV_8UC1, CV_32FC1, CV_32SC1};
+  vector<int> srcType {CV_8UC1, CV_32FC1, CV_32SC1};
 
-  vector<int> destType{CV_8UC3, CV_32FC3, CV_32SC3};
+  vector<int> destType {CV_8UC3, CV_32FC3, CV_32SC3};
   for (size_t i = 0; i < srcType.size(); ++i) {
     test.PrintLog("Perf test : Function: merge()", srcType[i]);
     for (val = start_val; val <= valmax; val *= base) {
@@ -88,7 +88,7 @@ void PERF_TEST::Test_Transpose(aclCxt *acl_context) {
   constexpr int rand_data_range = 32;
   constexpr int min_format_flag = 128;
 
-  vector<int> type{CV_32FC1, CV_32SC1};
+  vector<int> type {CV_32FC1, CV_32SC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Perf test : Function: transpose()", type[i]);
     for (val = start_val; val <= valmax; val *= base) {
@@ -141,8 +141,8 @@ void PERF_TEST::Test_Split(aclCxt *acl_context) {
   constexpr int min_format_flag = 128;
   constexpr int index0 = 0, index1 = 1, index2 = 2;
 
-  vector<int> srcType{CV_8UC3, CV_32FC3, CV_32SC3};
-  vector<int> destType{CV_8UC1, CV_32FC1, CV_32SC1};
+  vector<int> srcType {CV_8UC3, CV_32FC3, CV_32SC3};
+  vector<int> destType {CV_8UC1, CV_32FC1, CV_32SC1};
   for (size_t i = 0; i < srcType.size(); ++i) {
     test.PrintLog("Perf test : Function: split()", srcType[i]);
     for (val = start_val; val <= valmax; val *= base) {
@@ -212,7 +212,7 @@ void PERF_TEST::Test_Flip(aclCxt *acl_context) {
   constexpr int rand_data_range = 32;
   constexpr int min_format_flag = 128;
 
-  vector<int> type{CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
+  vector<int> type {CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Perf test : Function: flip()", type[i]);
     for (val = start_val; val <= valmax; val *= base) {

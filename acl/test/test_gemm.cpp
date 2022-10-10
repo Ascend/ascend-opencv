@@ -13,7 +13,7 @@ void PERF_TEST::Test_MatMul(aclCxt *acl_context) {
   int cycle_index = 10;  // 100;
   double begin, end, time, acltime;
   Common_Test test;
-  vector<int> type{CV_32FC1};
+  vector<int> type {CV_32FC1};
   constexpr int base = 2;
   constexpr int start_val = 8;
   constexpr int rand_data_range = 32;
@@ -68,7 +68,7 @@ void PERF_TEST::Test_Convolution(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
-  vector<int> type{CV_32FC1};
+  vector<int> type {CV_32FC1};
   constexpr int base = 2;
   constexpr int start_val = 8;
   constexpr int min_format_flag = 128;
@@ -78,9 +78,9 @@ void PERF_TEST::Test_Convolution(aclCxt *acl_context) {
 
   for (size_t i = 0; i < type.size(); ++i) {
     for (val = start_val; val <= valmax; val *= base) {
-      Mat mat_src(val, val, type[i], Scalar{s_val1, s_val2});
-      Mat mat_kernel(kernel_val, kernel_val, type[i], Scalar(s_val1, s_val4));
-      Mat mat_dest(val, val, type[i], Scalar{s_val6});
+      Mat mat_src(val, val, type[i], Scalar {s_val1, s_val2});
+      Mat mat_kernel(kernel_val, kernel_val, type[i], Scalar (s_val1, s_val4));
+      Mat mat_dest(val, val, type[i], Scalar {s_val6});
 
       aclMat aclmat_src(val, val, type[i], mat_src.data, acl_context);
       aclMat aclmat_kernel(kernel_val, kernel_val, type[i], mat_kernel.data, acl_context);
@@ -92,8 +92,8 @@ void PERF_TEST::Test_Convolution(aclCxt *acl_context) {
       end = static_cast<double>(getTickCount());
       time = (end - begin) / getTickFrequency() / cycle_index;
 
-      vector<int64_t> strides{1, 1, 1, 1};
-      vector<int64_t> pads{1, 1, 1, 1};
+      vector<int64_t> strides {1, 1, 1, 1};
+      vector<int64_t> pads {1, 1, 1, 1};
       n = (cycle_index - 1);
       Convolution(aclmat_src, aclmat_kernel, aclmat_dest, strides, pads, 0);
       wait_stream(acl_context, 0);

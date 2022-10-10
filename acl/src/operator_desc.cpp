@@ -67,11 +67,11 @@ OperatorDesc CreateOpDesc(const string opType, const vector<aclMat>& input_Mat,
   for (i = 0; i < input_Mat.size(); ++i) {
     if (config == TWO_DIMS) {
       int cols = input_Mat[i].step / input_Mat[i].elemSize();
-      vector<int64_t> shape{input_Mat[i].rows, cols};
+      vector<int64_t> shape {input_Mat[i].rows, cols};
       opDesc.AddInputTensorDesc(dataType, shape.size(), shape.data(), format);
     } else if (config == FOUR_DIMS) {
       int cols = input_Mat[i].step / input_Mat[i].elemSize();
-      vector<int64_t> shape{1, input_Mat[i].rows, cols,
+      vector<int64_t> shape {1, input_Mat[i].rows, cols,
                             input_Mat[i].channels()};
       opDesc.AddInputTensorDesc(dataType, shape.size(), shape.data(), format);
     }
@@ -80,11 +80,11 @@ OperatorDesc CreateOpDesc(const string opType, const vector<aclMat>& input_Mat,
   for (i = 0; i < output_Mat.size(); ++i) {
     if (config == TWO_DIMS) {
       int cols = output_Mat[i].step / output_Mat[i].elemSize();
-      vector<int64_t> shape{output_Mat[i].rows, cols};
+      vector<int64_t> shape {output_Mat[i].rows, cols};
       opDesc.AddOutputTensorDesc(dataType, shape.size(), shape.data(), format);
     } else if (config == FOUR_DIMS) {
       int cols = output_Mat[i].step / output_Mat[i].elemSize();
-      vector<int64_t> shape{1, output_Mat[i].rows, cols,
+      vector<int64_t> shape {1, output_Mat[i].rows, cols,
                             output_Mat[i].channels()};
       opDesc.AddOutputTensorDesc(dataType, shape.size(), shape.data(), format);
     }
