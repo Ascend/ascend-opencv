@@ -5,7 +5,6 @@ using namespace cv;
 using namespace cv::acl;
 namespace cv {
 namespace acl {
-
 static int merge_type(int depth, int channels) {
   switch (depth) {
     case CV_8U:
@@ -36,28 +35,27 @@ void merge(const vector<aclMat> &mv, aclMat &dest, int stream_id) {
 
   for (size_t i = 0; i < mv.size(); ++i) {
     int cols = mv[i].step / mv[i].elemSize();
-    vector<int64_t> inputShape{1, mv[i].rows, cols, mv[i].channels()};
+    vector<int64_t> inputShape {1, mv[i].rows, cols, mv[i].channels()};
     opDesc.AddInputTensorDesc(dataType, inputShape.size(), inputShape.data(),
                               ACL_FORMAT_NHWC);
   }
 
   int cols = mv[0].step / mv[0].elemSize();
   int channels = mv.size();
-  vector<int64_t> outputShape{1, mv[0].rows, cols, channels};
+  vector<int64_t> outputShape {1, mv[0].rows, cols, channels};
   opDesc.AddOutputTensorDesc(dataType, outputShape.size(), outputShape.data(),
                              ACL_FORMAT_NHWC);
 
   ino64_t N = mv.size();
-  constexpr int index2 = 2;
-  constexpr int index3 = 3;
-  constexpr int index4 = 4;
+  constexpr int index0 = 0, index1 = 1;
+  constexpr int index2 = 2, index3 = 3, index4 = 4;
   constexpr int merge_size3 = 3;
   constexpr int merge_size4 = 4;
   aclopSetAttrInt(opDesc.opAttr, "N", N);
 
-  aclSetTensorDescName(opDesc.inputDesc[0], "concat_dim");
+  aclSetTensorDescName(opDesc.inputDesc[index0], "concat_dim");
 
-  aclSetTensorDescName(opDesc.inputDesc[1], "x0");
+  aclSetTensorDescName(opDesc.inputDesc[index1], "x0");
   aclSetTensorDescName(opDesc.inputDesc[index2], "x1");
   if (mv.size() == merge_size3)
     aclSetTensorDescName(opDesc.inputDesc[index3], "x2");
@@ -91,7 +89,7 @@ void merge(const vector<aclMat> &mv, aclMat &dest, int stream_id) {
   for (size_t i = 0; i < outputBuffers_.size(); i++)
     AclSafeCall(aclDestroyDataBuffer(outputBuffers_[i]));
 
-  aclrtFree(dev);
+  AclSafeCall(aclrtFree(dev));
 }
 
 /**
@@ -123,18 +121,18 @@ void transpose(const aclMat &src, aclMat &dest, int stream_id) {
 
   void *dev;
   void *perm;
-  constexpr int dim0_t = 0;
-  constexpr int dim1_t = 1;
-  constexpr int dim2_t = 2;
-  constexpr int dim3_t = 3;
+  constexpr int dim0_t = 0, dim1_t = 1;
+  constexpr int dim2_t = 2, dim3_t = 3;
+  constexpr int index0 = 0, index1 = 1;
+  constexpr int index2 = 2, index3 = 3;
 
   size_t size = aclGetTensorDescSize(opDesc.inputDesc[1]);
   aclrtMalloc(&dev, size, ACL_MEM_MALLOC_NORMAL_ONLY);
   aclrtMallocHost(&perm, aclGetTensorDescSize(opDesc.inputDesc.data()[1]));
-  ((int *)perm)[0] = dim0_t;
-  ((int *)perm)[1] = dim2_t;
-  ((int *)perm)[2] = dim1_t;
-  ((int *)perm)[3] = dim3_t;
+  ((int *)perm)[index0] = dim0_t;
+  ((int *)perm)[index1] = dim2_t;
+  ((int *)perm)[index2] = dim1_t;
+  ((int *)perm)[index3] = dim3_t;
   aclrtMemcpy(dev, size, perm, size, ACL_MEMCPY_HOST_TO_DEVICE);
   inputBuffers_.emplace_back(aclCreateDataBuffer(dev, size));
 

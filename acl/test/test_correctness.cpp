@@ -628,6 +628,8 @@ void AclMat_Test::Test_operator_sub(aclCxt *acl_context) {
   const int rowsMax = 1048;
   const int colsMax = 1048;
   constexpr int lval = 1024;
+  constexpr int s_val1 = 1, s_val2 = 2, s_val3 = 3;
+  constexpr int s_val4 = 4, s_val6 = 6, s_val8 = 8;
 
   vector<int> type{CV_8UC1,  CV_8UC3,  CV_32FC1, CV_32FC3,
                    CV_32SC1, CV_32SC3, CV_64FC1};
@@ -635,8 +637,8 @@ void AclMat_Test::Test_operator_sub(aclCxt *acl_context) {
     test.PrintLog("Correctness test: Functoin: operator-=()", type[i]);
     for (rows = lval; rows < rowsMax; rows++) {
       for (cols = lval; cols < colsMax; cols++) {
-        Mat mat_src(rows, cols, type[i], Scalar(1, 2, 3));
-        Mat mat_dest(rows, cols, type[i], Scalar(4, 6, 8));
+        Mat mat_src(rows, cols, type[i], Scalar(s_val1, s_val2, s_val3));
+        Mat mat_dest(rows, cols, type[i], Scalar(s_val4, s_val6, s_val8));
         Mat mat_dest1(rows, cols, type[i]);
 
         aclMat aclmat_src(rows, cols, type[i], mat_src.data, acl_context,
@@ -664,6 +666,8 @@ void AclMat_Test::Test_operator_div(aclCxt *acl_context) {
   const int rowsMax = 1048;
   const int colsMax = 1048;
   constexpr int lval = 1024;
+  constexpr int s_val1 = 1, s_val2 = 2;
+  constexpr int s_val4 = 4, s_val6 = 6, s_val8 = 8;
 
   vector<int> type{CV_8UC1,  CV_8UC3,  CV_32FC1, CV_32FC3,
                    CV_32SC1, CV_32SC3, CV_64FC1};
@@ -671,8 +675,8 @@ void AclMat_Test::Test_operator_div(aclCxt *acl_context) {
     test.PrintLog("Correctness test: Functoin: operator/=()", type[i]);
     for (rows = lval; rows < rowsMax; rows++) {
       for (cols = lval; cols < colsMax; cols++) {
-        Mat mat_src(rows, cols, type[i], Scalar(1, 2, 4));
-        Mat mat_dest(rows, cols, type[i], Scalar(4, 6, 8));
+        Mat mat_src(rows, cols, type[i], Scalar(s_val1, s_val2, s_val4));
+        Mat mat_dest(rows, cols, type[i], Scalar(s_val4, s_val6, s_val8));
         Mat mat_dest1(rows, cols, type[i]);
 
         aclMat aclmat_src(rows, cols, type[i], mat_src.data, acl_context,

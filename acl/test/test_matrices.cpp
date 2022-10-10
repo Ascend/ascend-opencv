@@ -13,9 +13,10 @@ void PERF_TEST::Test_Merge(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
+  constexpr int base = 2;
   constexpr int start_val = 8;
   constexpr int rand_data_range = 32;
-  constexpr int s_val = 1;
+  constexpr int s_val1 = 1, s_val2 = 2, s_val3 = 3;
   constexpr int min_format_flag = 128;
 
   vector<int> srcType{CV_8UC1, CV_32FC1, CV_32SC1};
@@ -23,11 +24,11 @@ void PERF_TEST::Test_Merge(aclCxt *acl_context) {
   vector<int> destType{CV_8UC3, CV_32FC3, CV_32SC3};
   for (size_t i = 0; i < srcType.size(); ++i) {
     test.PrintLog("Perf test : Function: merge()", srcType[i]);
-    for (val = start_val; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= base) {
       n = cycle_index;
-      Mat mat_src1(val, val, srcType[i], Scalar(s_val));
-      Mat mat_src2(val, val, srcType[i], Scalar(s_val+1));
-      Mat mat_src3(val, val, srcType[i], Scalar(s_val+2));
+      Mat mat_src1(val, val, srcType[i], Scalar(s_val1));
+      Mat mat_src2(val, val, srcType[i], Scalar(s_val2));
+      Mat mat_src3(val, val, srcType[i], Scalar(s_val3));
       Mat mat_dest(val, val, destType[i]);
       Mat mat_dest1(val, val, destType[i]);
 
@@ -82,6 +83,7 @@ void PERF_TEST::Test_Transpose(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
+  constexpr int base = 2;
   constexpr int start_val = 8;
   constexpr int rand_data_range = 32;
   constexpr int min_format_flag = 128;
@@ -89,7 +91,7 @@ void PERF_TEST::Test_Transpose(aclCxt *acl_context) {
   vector<int> type{CV_32FC1, CV_32SC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Perf test : Function: transpose()", type[i]);
-    for (val = start_val; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= base) {
       n = cycle_index;
       Mat mat_src(val, val, type[i]);
       Mat mat_dest(val, val, type[i]);
@@ -133,15 +135,17 @@ void PERF_TEST::Test_Split(aclCxt *acl_context) {
   int cycle_index = 10;
   double begin, end, time, acltime;
   Common_Test test;
+  constexpr int base = 2;
   constexpr int start_val = 8;
   constexpr int rand_data_range = 32;
   constexpr int min_format_flag = 128;
+  constexpr int index0 = 0, index1 = 1, index2 = 2;
 
   vector<int> srcType{CV_8UC3, CV_32FC3, CV_32SC3};
   vector<int> destType{CV_8UC1, CV_32FC1, CV_32SC1};
   for (size_t i = 0; i < srcType.size(); ++i) {
     test.PrintLog("Perf test : Function: split()", srcType[i]);
-    for (val = start_val; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= base) {
       n = cycle_index;
       Mat mat_src(val, val, srcType[i]);
       Mat mat_dest1(val, val, destType[i]);
@@ -179,13 +183,13 @@ void PERF_TEST::Test_Split(aclCxt *acl_context) {
       end = static_cast<double>(getTickCount());
       acltime = (end - begin) / getTickFrequency() / (cycle_index - 1);
 
-      (acl_dest.data())[0].download(mat_dest1);
-      (acl_dest.data())[1].download(mat_dest2);
-      (acl_dest.data())[2].download(mat_dest3);
+      (acl_dest.data())[index0].download(mat_dest1);
+      (acl_dest.data())[index1].download(mat_dest2);
+      (acl_dest.data())[index2].download(mat_dest3);
 
-      bool ret = test.Test_Diff((dest.data())[0], mat_dest1);
-      ret &= test.Test_Diff((dest.data())[1], mat_dest2);
-      ret &= test.Test_Diff((dest.data())[2], mat_dest3);
+      bool ret = test.Test_Diff((dest.data())[index0], mat_dest1);
+      ret &= test.Test_Diff((dest.data())[index1], mat_dest2);
+      ret &= test.Test_Diff((dest.data())[index2], mat_dest3);
       ASSERT_TRUE(ret);
       if (val < min_format_flag)
         cout << "Shape: " << val << " x " << val << "\t\t";
@@ -203,6 +207,7 @@ void PERF_TEST::Test_Flip(aclCxt *acl_context) {
   int cycle_index = 100;
   double begin, end, time, acltime;
   Common_Test test;
+  constexpr int base = 2;
   constexpr int start_val = 8;
   constexpr int rand_data_range = 32;
   constexpr int min_format_flag = 128;
@@ -210,7 +215,7 @@ void PERF_TEST::Test_Flip(aclCxt *acl_context) {
   vector<int> type{CV_8UC1, CV_32FC1, CV_32SC1, CV_64FC1};
   for (size_t i = 0; i < type.size(); ++i) {
     test.PrintLog("Perf test : Function: flip()", type[i]);
-    for (val = start_val; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= base) {
       n = cycle_index;
       Mat mat_src(val, val, type[i]);
       Mat mat_dest(val, val, type[i]);

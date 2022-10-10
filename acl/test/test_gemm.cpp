@@ -14,12 +14,13 @@ void PERF_TEST::Test_MatMul(aclCxt *acl_context) {
   double begin, end, time, acltime;
   Common_Test test;
   vector<int> type{CV_32FC1};
+  constexpr int base = 2;
   constexpr int start_val = 8;
   constexpr int rand_data_range = 32;
   constexpr int min_format_flag = 128;
 
   for (size_t i = 0; i < type.size(); ++i) {
-    for (val = start_val; val <= valmax; val *= 2) {
+    for (val = start_val; val <= valmax; val *= base) {
       Mat mat_src(val, val, type[i]);
       Mat mat_src1(val, val, type[i]);
       Mat mat_dest(val, val, type[i]);
@@ -68,17 +69,21 @@ void PERF_TEST::Test_Convolution(aclCxt *acl_context) {
   double begin, end, time, acltime;
   Common_Test test;
   vector<int> type{CV_32FC1};
+  constexpr int base = 2;
   constexpr int start_val = 8;
   constexpr int min_format_flag = 128;
+  constexpr int s_val1 = 1, s_val2 = 2;
+  constexpr int s_val4 = 4, s_val6 = 6;
+  constexpr int kernel_val = 3;
 
   for (size_t i = 0; i < type.size(); ++i) {
-    for (val = start_val; val <= valmax; val *= 2) {
-      Mat mat_src(val, val, type[i], Scalar{1, 2});
-      Mat mat_kernel(3, 3, type[i], Scalar(1, 4));
-      Mat mat_dest(val, val, type[i], Scalar{6});
+    for (val = start_val; val <= valmax; val *= base) {
+      Mat mat_src(val, val, type[i], Scalar{s_val1, s_val2});
+      Mat mat_kernel(kernel_val, kernel_val, type[i], Scalar(s_val1, s_val4));
+      Mat mat_dest(val, val, type[i], Scalar{s_val6});
 
       aclMat aclmat_src(val, val, type[i], mat_src.data, acl_context);
-      aclMat aclmat_kernel(3, 3, type[i], mat_kernel.data, acl_context);
+      aclMat aclmat_kernel(kernel_val, kernel_val, type[i], mat_kernel.data, acl_context);
       aclMat aclmat_dest(val, val, type[i], mat_dest.data, acl_context);
 
       n = cycle_index;

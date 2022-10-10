@@ -34,7 +34,7 @@ inline aclEnv::~aclEnv() {
 }
 
 /////////////////////////////////////////aclCxt////////////////////////////
-inline aclCxt::aclCxt(){};
+inline aclCxt::aclCxt() {};
 
 inline aclCxt::aclCxt(int device_id) : _device_id(device_id) {
   _context = static_cast<aclrtContext *>(fastMalloc(sizeof(*_context)));
