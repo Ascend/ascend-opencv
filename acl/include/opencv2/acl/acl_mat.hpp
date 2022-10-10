@@ -11,7 +11,6 @@ namespace acl {
 //////////////////////////////// aclMat ////////////////////////////////
 class CV_EXPORTS aclMat {
  public:
-  //! default constructor
   aclMat();
   //! constructs aclMatrix of the specified size and type (_type is CV_8UC1,
   //! CV_16FC1 etc.)
@@ -154,11 +153,9 @@ class CV_EXPORTS aclMat {
   int rows, cols;
   //! a distance between successive rows in bytes; includes the gap if any
   size_t step;
-  //! pointer to the data(ACL memory object)
-  // uchar *data;
 
-  //! OpenCL context associated with the aclMat object.
-  void *data;  // TODO
+  //! pointer to the data(ACL memory object)
+  void *data;  
 
   //! pointer to the reference counter;
   // when aclMatrix points to user-allocated data, the pointer is NULL

@@ -5,48 +5,7 @@ using namespace cv;
 using namespace cv::acl;
 namespace cv {
 namespace acl {
-#if 0
-        void merge(const vector<aclMat>& mv, aclMat& dest)
-        {
-            vector<aclDataBuffer *> inputBuffers_;
-            vector<aclDataBuffer *> outputBuffers_;
-
-            OperatorDesc opDesc("ConcatD");
-            aclDataType dataType = type_transition(mv[0].depth());
-
-            for (size_t i = 0; i < mv.size(); ++i)
-            {
-                int cols = mv[i].step/mv[i].elemSize();
-                vector<int64_t> inputShape{1, mv[i].rows, cols,
-   mv[i].channels()}; opDesc.AddInputTensorDesc(dataType, inputShape.size(),
-   inputShape.data(), ACL_FORMAT_ND);
-            }
-            int cols = dest.step/dest.elemSize();
-            vector<int64_t> outputShape{1, dest.rows, cols, dest.channels()};
-            opDesc.AddOutputTensorDesc(dataType, outputShape.size(),
-   outputShape.data(), ACL_FORMAT_ND);
-
-            for (size_t i = 0; i < opDesc.inputDesc.size(); ++i)
-            {
-                inputBuffers_.emplace_back(aclCreateDataBuffer(mv[i].data,
-   mv[i].totalSize));
-            }
-            outputBuffers_.emplace_back(aclCreateDataBuffer(dest.data,
-   dest.totalSize));
-
-            aclopSetAttrInt(opDesc.opAttr, "N", mv.size());
-            aclopSetAttrInt(opDesc.opAttr, "concat_dim", 3);
-
-            compileAndRunop(opDesc, inputBuffers_, outputBuffers_,
-   dest.acl_context);
-
-            for (size_t i = 0; i < inputBuffers_.size(); i++)
-                AclSafeCall(aclDestroyDataBuffer(inputBuffers_[i]));
-            for (size_t i = 0; i < outputBuffers_.size(); i++)
-                AclSafeCall(aclDestroyDataBuffer(outputBuffers_[i]));
-        }
-#endif    
-
+        
 static int merge_type(int depth, int channels) {
   switch (depth) {
     case CV_8U:
@@ -202,35 +161,6 @@ void transpose(const aclMat &src, aclMat &dest, int stream_id) {
   AclSafeCall(aclrtFreeHost(host_data));
 }
 
-/* transposeD */
-#if 0
-        void transpose(const aclMat& src, aclMat& dest)
-        {
-            vector<aclDataBuffer *> inputBuffers_;
-            vector<aclDataBuffer *> outputBuffers_;
-
-            OperatorDesc opDesc("TransposeD");
-            aclDataType dataType = type_transition(src.depth());
-
-            vector<int64_t> inputShape1{1, src.rows, src.cols, src.channels()};
-            opDesc.AddInputTensorDesc(dataType, inputShape1.size(), inputShape1.data(), ACL_FORMAT_NHWC);
-
-            vector<int64_t> outputShape{1, src.cols, src.rows, src.channels()};
-            opDesc.AddOutputTensorDesc(dataType, outputShape.size(), outputShape.data(), ACL_FORMAT_NHWC);
-
-            vector<int64_t> permlist = {0, 2, 1, 3};
-            aclopSetAttrListInt(opDesc.opAttr, "perm", permlist.size(), permlist.data());
-
-            inputBuffers_.emplace_back(aclCreateDataBuffer(src.data, src.totalSize));
-            outputBuffers_.emplace_back(aclCreateDataBuffer(dest.data, dest.totalSize));
-
-            compileAndRunop(opDesc, inputBuffers_, outputBuffers_, src.acl_context);
-
-            AclSafeCall(aclDestroyDataBuffer(inputBuffers_[0]));
-            AclSafeCall(aclDestroyDataBuffer(outputBuffers_[0]));
-        }
-#endif
-
 static int split_type(int depth) {
   switch (depth) {
     case CV_8U:
@@ -289,93 +219,6 @@ void split(const aclMat &src, vector<aclMat> &mv, int stream_id) {
     AclSafeCall(aclDestroyDataBuffer(outputBuffers_[i]));
 }
 
-#if 0
-        //disable
-
-        void split(const aclMat& src, vector<aclMat>& mv)
-        {
-            vector<aclDataBuffer *> inputBuffers_;
-            vector<aclDataBuffer *> inputBuffers_host;
-            vector<aclDataBuffer *> outputBuffers_;
-            int num_split = src.channels();
-
-            OperatorDesc opDesc("Split");
-            aclDataType dataType = type_transition(src.depth());
-
-            vector<int64_t> inputShape{};
-            opDesc.AddInputTensorDesc(ACL_INT32, inputShape.size(), inputShape.data(), ACL_FORMAT_ND);
-
-            int cols = src.step/src.elemSize();
-            vector<int64_t> inputShape1{1, src.rows, cols, src.channels()};
-            opDesc.AddInputTensorDesc(dataType, inputShape1.size(), inputShape1.data(), ACL_FORMAT_ND);
-            
-            for (int i = 0; i < num_split; ++i)
-            {
-                vector<int64_t> outputShape{-1, -1, -1, -1};
-                opDesc.AddOutputTensorDesc(dataType, outputShape.size(), outputShape.data(), ACL_FORMAT_ND);
-            }
-            
-            aclSetTensorDescName(opDesc.inputDesc[0], "split_dim");
-            aclSetTensorDescName(opDesc.inputDesc[1], "x");
-            aclSetTensorDescName(opDesc.outputDesc[0], "y0");
-            aclSetTensorDescName(opDesc.outputDesc[1], "y1");
-            aclSetTensorDescName(opDesc.outputDesc[2], "y2");
-
-            aclopSetAttrInt(opDesc.opAttr, "num_split", num_split);
-
-            AclSafeCall(aclopCompile(opDesc.opType.c_str(),
-                            opDesc.inputDesc.size(),
-                            opDesc.inputDesc.data(),
-                            opDesc.outputDesc.size(),
-                            opDesc.outputDesc.data(),
-                            opDesc.opAttr,
-                            ACL_ENGINE_SYS,
-                            ACL_COMPILE_SYS,
-                            nullptr));
-
-            void *dev;
-            int split_dim = 3;
-            size_t size = aclGetTensorDescSize(opDesc.inputDesc[0]);
-            aclrtMalloc(&dev, size, ACL_MEM_MALLOC_NORMAL_ONLY);
-            aclrtMemcpy(dev, size, &split_dim, size, ACL_MEMCPY_HOST_TO_DEVICE);
-
-            inputBuffers_host.emplace_back(aclCreateDataBuffer(&split_dim, size));
-
-            void *host_data;
-            size_t host_size = src.totalSize;
-            aclrtMallocHost(&host_data, host_size);
-            aclrtMemcpy(host_data, host_size, src.data, host_size, ACL_MEMCPY_DEVICE_TO_HOST);
-            inputBuffers_host.emplace_back(aclCreateDataBuffer(host_data, host_size));
-
-            AclSafeCall(aclopInferShape("Split", opDesc.inputDesc.size(), opDesc.inputDesc.data(), \
-                    inputBuffers_host.data(), opDesc.outputDesc.size(), opDesc.outputDesc.data(), opDesc.opAttr));
-
-            inputBuffers_.emplace_back(aclCreateDataBuffer(dev, size));
-            inputBuffers_.emplace_back(aclCreateDataBuffer(src.data, src.totalSize));
-                
-            for (int i = 0; i < num_split; ++i)
-                outputBuffers_.emplace_back(aclCreateDataBuffer(mv[i].data, mv[i].totalSize));
-
-            AclSafeCall(aclopExecuteV2(opDesc.opType.c_str(),
-                            inputBuffers_.size(),
-                            opDesc.inputDesc.data(),
-                            inputBuffers_.data(),
-                            outputBuffers_.size(),
-                            opDesc.outputDesc.data(),
-                            outputBuffers_.data(),
-                            opDesc.opAttr,
-                            src.acl_context->get_stream(0)));
-
-            AclSafeCall(aclrtSynchronizeStream(src.acl_context->get_stream(0)));
-
-            AclSafeCall(aclDestroyDataBuffer(inputBuffers_[0]));
-            AclSafeCall(aclDestroyDataBuffer(inputBuffers_[1]));
-            AclSafeCall(aclDestroyDataBuffer(inputBuffers_host[0]));
-            AclSafeCall(aclDestroyDataBuffer(inputBuffers_host[1]));
-            for (int i = 0; i < num_split; ++i)
-                AclSafeCall(aclDestroyDataBuffer(outputBuffers_[i]));
-        }
-#endif
 
 static void flip_(const aclMat &src, aclMat &dest, int axis, int stream_id) {
   vector<aclDataBuffer *> inputBuffers_;

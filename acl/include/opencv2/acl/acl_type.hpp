@@ -52,8 +52,8 @@ direct,
 #ifndef OPENCV_ACL_TYPE_HPP
 #define OPENCV_ACL_TYPE_HPP
 
-#define AclSafeCall(expr) __aclSafeCall(expr, __FILE__, __LINE__, __func__)
-#define AclVerifyCall(expr) __aclSafeCall(res, __FILE__, __LINE__, __func__)
+#define AclSafeCall(expr) aclSafeCall(expr, __FILE__, __LINE__, __func__)
+#define AclVerifyCall(expr) aclSafeCall(res, __FILE__, __LINE__, __func__)
 
 #include <iostream>
 
@@ -65,8 +65,8 @@ namespace acl {
 /**
  * An error is reported if the expression value is not 0
  */
-static inline void __aclSafeCall(int err, const char *file, const int line,
-                                 const char *func = "") {
+inline void aclSafeCall(int err, const char *file, const int line,
+                        const char *func = "") {
   if (0 != err) {
     const char *function = func ? func : "unknown function";
     std::cerr << "Acl Called Error: "
@@ -129,8 +129,9 @@ inline aclDataType type_transition(int depth) {
       return ACL_FLOAT;
     case CV_64F:
       return ACL_DOUBLE;
+    default:
+      return ACL_DT_UNDEFINED;
   }
-  return ACL_DT_UNDEFINED;
 }
 
 inline aclrtMemMallocPolicy type_transition(MemMallocPolicy type) {
@@ -147,8 +148,9 @@ inline aclrtMemMallocPolicy type_transition(MemMallocPolicy type) {
       return ACL_MEM_MALLOC_HUGE_ONLY_P2P;
     case MALLOC_NORMAL_ONLY_P2P:
       return ACL_MEM_MALLOC_NORMAL_ONLY_P2P;
+    default:
+      return ACL_MEM_MALLOC_HUGE_FIRST;
   }
-  return ACL_MEM_MALLOC_HUGE_FIRST;
 }
 
 } /* end of namespace acl */
