@@ -126,15 +126,22 @@
 
 
 ## 安装说明
-1. 在配置好AScend之后,用户需要官网下载好opencv库和本模块(acl),保证acl模块和opencv在同一级目录下
-2. 进入acl目录将run.sh脚本拷贝或者移动到acl和opencv的同级目录
-3. 如果acl路径不在系统默认路径，修改acl/CMakelists.txt文件，修改acl_lib,acl_inc路径
+1. 在配置好AScend之后,用户需要官网下载好opencv库,并将本模块(acl模块)和opencv在同一级目录下
+2. 运行命令:cd acl && mv run.sh ../,确保acl模块、opencv、run.sh在同一目录下
+3. 如果AScend安装的路径不是系统默认路径，修改acl/CMakelists.txt文件中acl_lib，acl_inc路径
 5. 如果需要运行测试案例需要修改test目录下acl.cpp中的set_device函数中.json文件的路径为绝对路径
 6. 给脚本文件加权限: chmod +x run.sh
-7. 运行脚本: ./run.sh，如果系统架构为x86，运行：./run.sh -x86
-8. 如果需要安装之后运行单元测试模块，可在脚本后加命令: ./run.sh ACLTEST
+7. 单独运行安装脚本: ./run.sh，如果系统架构为x86，运行：./run.sh -x86
+8. 运行安装并且启动单元测试模块: ./run.sh ACLTEST，如果系统架构为x86，运行：./run.sh -x86 ACLTEST
 
 
+## 单独测试步骤说明
+1、acl库安装成功之后，进入opencv/build/bin目录下
+2、找到生成的相对应的测试可执行文件opencv_test_acl
+3、测试全部模块可以直接运行opencv_test_acl
+4、如果要测试单独某个模块，参照acl/test/acl.cpp里面TEST函数
+5、例如：TEST(ACLMAT_CONSTRUCTOR, MEMORY_ALIGN)、TEST(Gemm, MatMul)，可以采用命令： ./opencv_test_acl --gtest_filter=[测试模块名字],如： ./opencv_test_acl --gtest_fliter=ACLMAT_CONSTRUCTOR.MEMORY_ALIGN
+./opencv_test_acl --gtest_fliter=Gemm.MatMul
 
 
 
