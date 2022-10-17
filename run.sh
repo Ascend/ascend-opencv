@@ -16,7 +16,16 @@ then
 fi
 cd build
 
-cmake ..
+for var in $@
+do 
+    if [ $var == "-x86" ]
+        then
+	    cmake .. -DCMAKE_SHARED_LINKER_FLAGS=-Wl,-Bsymbolic
+	else
+	    cmake ..
+    fi
+done
+
 make -j
 while [ $? != 0 ]
 do
