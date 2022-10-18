@@ -136,12 +136,12 @@
 
 
 ## 单独测试步骤说明
-1、acl库安装成功之后，进入opencv/build/bin目录下
-2、找到生成的相对应的测试可执行文件opencv_test_acl
-3、测试全部模块可以直接运行opencv_test_acl
-4、如果要测试单独某个模块，参照acl/test/acl.cpp里面TEST函数
-5、例如：TEST(ACLMAT_CONSTRUCTOR, MEMORY_ALIGN)、TEST(Gemm, MatMul)，可以采用命令： ./opencv_test_acl --gtest_filter=[测试模块名字],如： ./opencv_test_acl --gtest_fliter=ACLMAT_CONSTRUCTOR.MEMORY_ALIGN
-./opencv_test_acl --gtest_fliter=Gemm.MatMul
+1. acl库安装成功之后，进入opencv/build/bin目录下
+2. 找到生成的相对应的测试可执行文件opencv_test_acl
+3. 测试全部模块可以直接运行opencv_test_acl
+4. 如果要测试单独某个模块，参照acl/test/acl.cpp里面TEST函数
+5. 例如：TEST(ACLMAT_CONSTRUCTOR, MEMORY_ALIGN)、TEST(Gemm, MatMul)，可以采用命令： ./opencv_test_acl --gtest_filter=[测试模块名字]，
+   如： ./opencv_test_acl --gtest_fliter=ACLMAT_CONSTRUCTOR.MEMORY_ALIGN和./opencv_test_acl --gtest_fliter=Gemm.MatMul
 
 
 
