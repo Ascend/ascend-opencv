@@ -29,12 +29,12 @@ void merge(const vector<aclMat> &mv, aclMat &dest, int stream_id) {
 
   for (size_t i = 0; i < mv.size(); ++i) {
     int cols = mv[i].step / mv[i].elemSize();
-    vector<int64_t> inputShape{1, mv[i].rows, cols, mv[i].channels()};
+    vector<int64_t> inputShape {1, mv[i].rows, cols, mv[i].channels()};
     opDesc.AddInputTensorDesc(dataType, inputShape.size(), inputShape.data(),
                               ACL_FORMAT_ND);
   }
   int cols = dest.step / dest.elemSize();
-  vector<int64_t> outputShape{1, dest.rows, cols, dest.channels()};
+  vector<int64_t> outputShape {1, dest.rows, cols, dest.channels()};
   opDesc.AddOutputTensorDesc(dataType, outputShape.size(), outputShape.data(),
                              ACL_FORMAT_ND);
 
@@ -69,15 +69,15 @@ void transpose(const aclMat &src, aclMat &dest, int stream_id) {
   OperatorDesc opDesc("Transpose");
   aclDataType dataType = type_transition(src.depth());
 
-  vector<int64_t> inputShape1{1, src.rows, src.cols, src.channels()};
+  vector<int64_t> inputShape1 {1, src.rows, src.cols, src.channels()};
   opDesc.AddInputTensorDesc(dataType, inputShape1.size(), inputShape1.data(),
                             ACL_FORMAT_ND);
 
-  vector<int64_t> inputShape2{4};
+  vector<int64_t> inputShape2 {4};
   opDesc.AddInputTensorDesc(ACL_INT32, inputShape2.size(), inputShape2.data(),
                             ACL_FORMAT_ND);
 
-  vector<int64_t> outputShape{-1, -1, -1, -1};
+  vector<int64_t> outputShape {-1, -1, -1, -1};
   opDesc.AddOutputTensorDesc(dataType, outputShape.size(), outputShape.data(),
                              ACL_FORMAT_ND);
 
@@ -162,12 +162,12 @@ void split(const aclMat &src, vector<aclMat> &mv, int stream_id) {
   aclDataType dataType = type_transition(src.depth());
 
   int cols = src.step / src.elemSize();
-  vector<int64_t> inputShape1{1, src.rows, cols, src.channels()};
+  vector<int64_t> inputShape1 {1, src.rows, cols, src.channels()};
   opDesc.AddInputTensorDesc(dataType, inputShape1.size(), inputShape1.data(),
                             ACL_FORMAT_ND);
 
   for (int i = 0; i < num_split; ++i) {
-    vector<int64_t> outputShape{1, src.rows, cols, 1};
+    vector<int64_t> outputShape {1, src.rows, cols, 1};
     opDesc.AddOutputTensorDesc(dataType, outputShape.size(), outputShape.data(),
                                ACL_FORMAT_ND);
   }
@@ -203,15 +203,15 @@ static void flip_(const aclMat &src, aclMat &dest, int axis, int stream_id) {
   OperatorDesc opDesc("ReverseV2");
   aclDataType dataType = type_transition(src.depth());
 
-  vector<int64_t> inputShape1{1, src.rows, src.cols, src.channels()};
+  vector<int64_t> inputShape1 {1, src.rows, src.cols, src.channels()};
   opDesc.AddInputTensorDesc(dataType, inputShape1.size(), inputShape1.data(),
                             ACL_FORMAT_ND);
 
-  vector<int64_t> inputShape2{1};
+  vector<int64_t> inputShape2 {1};
   opDesc.AddInputTensorDesc(ACL_INT32, inputShape2.size(), inputShape2.data(),
                             ACL_FORMAT_ND);
 
-  vector<int64_t> outputShape{1, dest.rows, dest.cols, dest.channels()};
+  vector<int64_t> outputShape {1, dest.rows, dest.cols, dest.channels()};
   opDesc.AddOutputTensorDesc(dataType, outputShape.size(), outputShape.data(),
                              ACL_FORMAT_ND);
 
