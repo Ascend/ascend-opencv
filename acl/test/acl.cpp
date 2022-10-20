@@ -25,7 +25,7 @@ using namespace std;
 
 namespace opencv_test {
 namespace {
-aclCxt *acl_context_0 = set_device("../../modules/acl/test/acl.json", 2, 3);
+aclCxt *acl_context_0 = set_device("../../modules/acl/test/acl.json", 0, 3);
 ////////////////////////////////////////////////////Correctness_test////////////////////////////////////////////////////////
 /* range: rows: 1 ~ 64, cols: 1 ~ 64, type: 0 ~ 7
  * test function:

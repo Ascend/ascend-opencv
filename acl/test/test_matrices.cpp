@@ -31,19 +31,18 @@ void PERF_TEST::Test_Merge(aclCxt *acl_context) {
   constexpr int base = 2;
   constexpr int start_val = 8;
   constexpr int rand_data_range = 32;
-  constexpr int s_val1 = 1, s_val2 = 2, s_val3 = 3;
   constexpr int min_format_flag = 128;
 
   vector<int> srcType {CV_8UC1, CV_32FC1, CV_32SC1};
-
   vector<int> destType {CV_8UC3, CV_32FC3, CV_32SC3};
+
   for (size_t i = 0; i < srcType.size(); ++i) {
     test.PrintLog("Perf test : Function: merge()", srcType[i]);
     for (val = start_val; val <= valmax; val *= base) {
       n = cycle_index;
-      Mat mat_src1(val, val, srcType[i], Scalar(s_val1));
-      Mat mat_src2(val, val, srcType[i], Scalar(s_val2));
-      Mat mat_src3(val, val, srcType[i], Scalar(s_val3));
+      Mat mat_src1(val, val, srcType[i]);
+      Mat mat_src2(val, val, srcType[i]);
+      Mat mat_src3(val, val, srcType[i]);
       Mat mat_dest(val, val, destType[i]);
       Mat mat_dest1(val, val, destType[i]);
 

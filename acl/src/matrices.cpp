@@ -20,81 +20,32 @@ using namespace cv;
 using namespace cv::acl;
 namespace cv {
 namespace acl {
-static int merge_type(int depth, int channels) {
-  switch (depth) {
-    case CV_8U:
-      return CV_8UC(channels);
-    case CV_8S:
-      return CV_8SC(channels);
-    case CV_32F:
-      return CV_32FC(channels);
-    case CV_32S:
-      return CV_32SC(channels);
-    case CV_64F:
-      return CV_64FC(channels);
-    default:
-      return -1;
-  }
-}
-
 void merge(const vector<aclMat> &mv, aclMat &dest, int stream_id) {
   vector<aclDataBuffer *> inputBuffers_;
   vector<aclDataBuffer *> outputBuffers_;
 
-  OperatorDesc opDesc("Concat");
+  OperatorDesc opDesc("ConcatD");
   aclDataType dataType = type_transition(mv[0].depth());
-
-  vector<int64_t> inputShape {};
-  opDesc.AddInputTensorDesc(ACL_INT32, inputShape.size(), inputShape.data(),
-                            ACL_FORMAT_ND);
 
   for (size_t i = 0; i < mv.size(); ++i) {
     int cols = mv[i].step / mv[i].elemSize();
-    vector<int64_t> inputShape {1, mv[i].rows, cols, mv[i].channels()};
+    vector<int64_t> inputShape{1, mv[i].rows, cols, mv[i].channels()};
     opDesc.AddInputTensorDesc(dataType, inputShape.size(), inputShape.data(),
-                              ACL_FORMAT_NHWC);
+                              ACL_FORMAT_ND);
   }
-
-  int cols = mv[0].step / mv[0].elemSize();
-  int channels = mv.size();
-  vector<int64_t> outputShape {1, mv[0].rows, cols, channels};
+  int cols = dest.step / dest.elemSize();
+  vector<int64_t> outputShape{1, dest.rows, cols, dest.channels()};
   opDesc.AddOutputTensorDesc(dataType, outputShape.size(), outputShape.data(),
-                             ACL_FORMAT_NHWC);
+                             ACL_FORMAT_ND);
 
-  ino64_t N = mv.size();
-  constexpr int index0 = 0, index1 = 1;
-  constexpr int index2 = 2, index3 = 3, index4 = 4;
-  constexpr int merge_size3 = 3;
-  constexpr int merge_size4 = 4;
-  aclopSetAttrInt(opDesc.opAttr, "N", N);
-
-  aclSetTensorDescName(opDesc.inputDesc[index0], "concat_dim");
-
-  aclSetTensorDescName(opDesc.inputDesc[index1], "x0");
-  aclSetTensorDescName(opDesc.inputDesc[index2], "x1");
-  if (mv.size() == merge_size3)
-    aclSetTensorDescName(opDesc.inputDesc[index3], "x2");
-  else if (mv.size() == merge_size4)
-    aclSetTensorDescName(opDesc.inputDesc[index4], "x3");
-  aclSetTensorDescName(opDesc.outputDesc[0], "y");
-
-  void *dev;
-  int64_t concat_dim = 3;
-  size_t size = aclGetTensorDescSize(opDesc.inputDesc[0]);
-  aclrtMalloc(&dev, size, ACL_MEM_MALLOC_NORMAL_ONLY);
-  aclrtMemcpy(dev, size, &concat_dim, size, ACL_MEMCPY_HOST_TO_DEVICE);
-  inputBuffers_.emplace_back(aclCreateDataBuffer(dev, size));
-
-  for (size_t i = 0; i < mv.size(); ++i)
+  for (size_t i = 0; i < opDesc.inputDesc.size(); ++i) {
     inputBuffers_.emplace_back(
         aclCreateDataBuffer(mv[i].data, mv[i].totalSize));
-
-  constexpr int false_type_flag = -1;
-  int type = merge_type(mv[0].depth(), channels);
-  CV_Assert(type != false_type_flag);
-  aclMat temp(mv[0].rows, mv[0].cols, type, mv[0].acl_context);
-  dest = temp;
+  }
   outputBuffers_.emplace_back(aclCreateDataBuffer(dest.data, dest.totalSize));
+  constexpr int c_dim = 3;
+  aclopSetAttrInt(opDesc.opAttr, "N", mv.size());
+  aclopSetAttrInt(opDesc.opAttr, "concat_dim", c_dim);
 
   compileAndRunop(opDesc, inputBuffers_, outputBuffers_, dest.acl_context,
                   stream_id);
@@ -103,8 +54,6 @@ void merge(const vector<aclMat> &mv, aclMat &dest, int stream_id) {
     AclSafeCall(aclDestroyDataBuffer(inputBuffers_[i]));
   for (size_t i = 0; i < outputBuffers_.size(); i++)
     AclSafeCall(aclDestroyDataBuffer(outputBuffers_[i]));
-
-  AclSafeCall(aclrtFree(dev));
 }
 
 /**
@@ -120,15 +69,15 @@ void transpose(const aclMat &src, aclMat &dest, int stream_id) {
   OperatorDesc opDesc("Transpose");
   aclDataType dataType = type_transition(src.depth());
 
-  vector<int64_t> inputShape1 {1, src.rows, src.cols, src.channels()};
+  vector<int64_t> inputShape1{1, src.rows, src.cols, src.channels()};
   opDesc.AddInputTensorDesc(dataType, inputShape1.size(), inputShape1.data(),
                             ACL_FORMAT_ND);
 
-  vector<int64_t> inputShape2 {4};
+  vector<int64_t> inputShape2{4};
   opDesc.AddInputTensorDesc(ACL_INT32, inputShape2.size(), inputShape2.data(),
                             ACL_FORMAT_ND);
 
-  vector<int64_t> outputShape {-1, -1, -1, -1};
+  vector<int64_t> outputShape{-1, -1, -1, -1};
   opDesc.AddOutputTensorDesc(dataType, outputShape.size(), outputShape.data(),
                              ACL_FORMAT_ND);
 
@@ -213,12 +162,12 @@ void split(const aclMat &src, vector<aclMat> &mv, int stream_id) {
   aclDataType dataType = type_transition(src.depth());
 
   int cols = src.step / src.elemSize();
-  vector<int64_t> inputShape1 {1, src.rows, cols, src.channels()};
+  vector<int64_t> inputShape1{1, src.rows, cols, src.channels()};
   opDesc.AddInputTensorDesc(dataType, inputShape1.size(), inputShape1.data(),
                             ACL_FORMAT_ND);
 
   for (int i = 0; i < num_split; ++i) {
-    vector<int64_t> outputShape {1, src.rows, cols, 1};
+    vector<int64_t> outputShape{1, src.rows, cols, 1};
     opDesc.AddOutputTensorDesc(dataType, outputShape.size(), outputShape.data(),
                                ACL_FORMAT_ND);
   }
@@ -254,15 +203,15 @@ static void flip_(const aclMat &src, aclMat &dest, int axis, int stream_id) {
   OperatorDesc opDesc("ReverseV2");
   aclDataType dataType = type_transition(src.depth());
 
-  vector<int64_t> inputShape1 {1, src.rows, src.cols, src.channels()};
+  vector<int64_t> inputShape1{1, src.rows, src.cols, src.channels()};
   opDesc.AddInputTensorDesc(dataType, inputShape1.size(), inputShape1.data(),
                             ACL_FORMAT_ND);
 
-  vector<int64_t> inputShape2 {1};
+  vector<int64_t> inputShape2{1};
   opDesc.AddInputTensorDesc(ACL_INT32, inputShape2.size(), inputShape2.data(),
                             ACL_FORMAT_ND);
 
-  vector<int64_t> outputShape {1, dest.rows, dest.cols, dest.channels()};
+  vector<int64_t> outputShape{1, dest.rows, dest.cols, dest.channels()};
   opDesc.AddOutputTensorDesc(dataType, outputShape.size(), outputShape.data(),
                              ACL_FORMAT_ND);
 
